@@ -156,6 +156,9 @@
     .item-type-badge{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;border-radius:4px;padding:2px 7px;flex-shrink:0;}
     .badge-video{background:#ede9fe;color:#6d28d9;}
     .badge-text{background:#e0f2fe;color:#0369a1;}
+    .badge-imagen{background:#fce7f3;color:#be185d;}
+    .item-imagen-wrap{border-radius:var(--radius-sm);overflow:hidden;margin-bottom:10px;}
+    .item-imagen-wrap img{width:100%;display:block;max-height:400px;object-fit:contain;background:#f5f4f0;}
     .item-title{font-weight:500;font-size:14px;flex:1;cursor:pointer;}
     .item-card.completed .item-title{color:var(--text-muted);text-decoration:line-through;}
     .item-admin-btns{display:none;gap:5px;flex-shrink:0;}
@@ -940,6 +943,8 @@ function crearTarjetaElemento(el, secId) {
   div.dataset.id = el.id;
   const tipoBadge = el.tipo === 'video'
     ? '<span class="item-type-badge badge-video">▶ Vídeo</span>'
+    : el.tipo === 'imagen'
+    ? '<span class="item-type-badge badge-imagen">🖼️ Imagen</span>'
     : '<span class="item-type-badge badge-text">📄 Texto</span>';
   div.innerHTML = `
     <div class="item-header">
@@ -962,6 +967,9 @@ function crearTarjetaElemento(el, secId) {
     html += embed
       ? `<div class="video-wrap"><iframe src="${embed}" allowfullscreen allow="accelerometer;autoplay;clipboard-write;encrypted-media;gyroscope;picture-in-picture"></iframe></div>`
       : `<p style="color:var(--warn);font-size:13px;">⚠️ No se pudo generar previsualización. <a href="${escHtml(el.videoUrl)}" target="_blank">Abrir →</a></p>`;
+  }
+  if (el.tipo === 'imagen' && el.imagenUrl) {
+    html += `<div class="item-imagen-wrap"><img src="${escHtml(el.imagenUrl)}" alt="${escHtml(el.titulo)}" loading="lazy" /></div>`;
   }
   if (el.enlaces?.length) {
     html += '<div class="attachments-list">';
@@ -1181,11 +1189,16 @@ function htmlModalElemento(el) {
     <div class="type-selector">
       <button class="type-btn ${tipo==='video'?'active':''}" onclick="seleccionarTipo('video')">▶ Vídeo</button>
       <button class="type-btn ${tipo==='texto'?'active':''}" onclick="seleccionarTipo('texto')">📄 Texto</button>
+      <button class="type-btn ${tipo==='imagen'?'active':''}" onclick="seleccionarTipo('imagen')">🖼️ Imagen</button>
     </div>
     <div class="form-group"><label>Título</label><input type="text" id="inp-el-titulo" value="${escHtml(el?.titulo||'')}" autofocus /></div>
     <div class="form-group" id="wrap-url" style="${tipo!=='video'?'display:none':''}">
       <label>URL del vídeo</label>
       <input type="url" id="inp-el-url" value="${escHtml(el?.videoUrl||'')}" placeholder="https://www.youtube.com/watch?v=..." />
+    </div>
+    <div class="form-group" id="wrap-img-url" style="${tipo!=='imagen'?'display:none':''}">
+      <label>URL de la imagen</label>
+      <input type="url" id="inp-el-imgurl" value="${escHtml(el?.imagenUrl||'')}" placeholder="https://ejemplo.com/imagen.jpg" />
     </div>
     <div class="form-group"><label>Descripción (opcional)</label><textarea id="inp-el-desc">${escHtml(el?.descripcion||'')}</textarea></div>
     <div class="form-group">
@@ -1203,9 +1216,14 @@ function htmlModalElemento(el) {
     </div>`;
 }
 function seleccionarTipo(tipo) {
-  document.querySelectorAll('.type-btn').forEach(b => b.classList.toggle('active', (tipo==='video'&&b.textContent.trim().startsWith('▶'))||(tipo==='texto'&&b.textContent.trim().startsWith('📄'))));
-  const wrap = document.getElementById('wrap-url');
-  if (wrap) wrap.style.display = tipo === 'video' ? 'block' : 'none';
+  document.querySelectorAll('.type-btn').forEach(b => {
+    const t = b.textContent.trim();
+    b.classList.toggle('active', (tipo==='video'&&t.startsWith('▶'))||(tipo==='texto'&&t.startsWith('📄'))||(tipo==='imagen'&&t.startsWith('🖼️')));
+  });
+  const wrapUrl = document.getElementById('wrap-url');
+  if (wrapUrl) wrapUrl.style.display = tipo === 'video' ? 'block' : 'none';
+  const wrapImg = document.getElementById('wrap-img-url');
+  if (wrapImg) wrapImg.style.display = tipo === 'imagen' ? 'block' : 'none';
 }
 function onAddLink() {
   const nombre = document.getElementById('inp-link-nombre')?.value.trim();
@@ -1232,9 +1250,11 @@ async function guardarElemento() {
   const titulo = document.getElementById('inp-el-titulo')?.value.trim();
   if (!titulo) { mostrarToast('Título obligatorio', 'danger'); return; }
   const tipoActivo = document.querySelector('.type-btn.active');
-  const tipo = tipoActivo?.textContent.trim().startsWith('▶') ? 'video' : 'texto';
+  const tipoTexto = tipoActivo?.textContent.trim();
+  const tipo = tipoTexto?.startsWith('▶') ? 'video' : tipoTexto?.startsWith('🖼️') ? 'imagen' : 'texto';
   const desc = document.getElementById('inp-el-desc')?.value.trim() || '';
   const url = document.getElementById('inp-el-url')?.value.trim() || '';
+  const imgUrl = document.getElementById('inp-el-imgurl')?.value.trim() || '';
   const sec = curso.secciones.find(s => s.id === modalEditSecId);
   if (!sec) return;
   const btn = document.getElementById('btn-save-el');
@@ -1242,10 +1262,10 @@ async function guardarElemento() {
   try {
     if (modalEditElId) {
       const el = sec.elementos.find(e => e.id === modalEditElId);
-      if (el) Object.assign(el, { titulo, tipo, descripcion: desc, videoUrl: tipo==='video'?url:'', enlaces: modalEnlaces });
+      if (el) Object.assign(el, { titulo, tipo, descripcion: desc, videoUrl: tipo==='video'?url:'', imagenUrl: tipo==='imagen'?imgUrl:'', enlaces: modalEnlaces });
     } else {
       sec.elementos = sec.elementos || [];
-      sec.elementos.push({ id: generarId('e'), titulo, tipo, descripcion: desc, videoUrl: tipo==='video'?url:'', enlaces: modalEnlaces });
+      sec.elementos.push({ id: generarId('e'), titulo, tipo, descripcion: desc, videoUrl: tipo==='video'?url:'', imagenUrl: tipo==='imagen'?imgUrl:'', enlaces: modalEnlaces });
     }
     await guardarCurso(); cerrarModal(); mostrarToast(modalEditElId ? 'Elemento actualizado' : 'Elemento añadido', 'success');
   } catch (_) { if (btn) { btn.disabled = false; btn.textContent = 'Guardar'; } }
