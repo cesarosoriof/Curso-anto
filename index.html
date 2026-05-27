@@ -439,9 +439,10 @@
 
     /* ── LAYOUT ── */
     #main-layout {
-      max-width: 860px;
+      max-width: 1280px;
+      width: 100%;
       margin: 0 auto;
-      padding: 36px 20px 80px;
+      padding: 32px 24px 80px;
     }
 
     /* ── HERO ── */
@@ -466,7 +467,7 @@
       color: var(--text-muted);
       margin-top: 8px;
       font-size: 15px;
-      max-width: 640px;
+      max-width: 800px;
     }
 
     .edit-inline-btn {
@@ -540,6 +541,7 @@
       display: grid;
       grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
       gap: 20px;
+      width: 100%;
     }
 
     .section-card {
@@ -742,12 +744,14 @@
       border: 1px solid var(--border);
       border-radius: var(--radius-lg);
       overflow: hidden;
-      min-height: 500px;
+      min-height: 520px;
+      width: 100%;
     }
 
     /* LEFT SIDEBAR */
     .detail-sidebar {
-      width: 300px;
+      width: 280px;
+      min-width: 240px;
       flex-shrink: 0;
       border-right: 1px solid var(--border);
       display: flex;
@@ -886,7 +890,8 @@
     /* RIGHT CONTENT PANEL */
     .detail-content {
       flex: 1;
-      padding: 24px 28px;
+      min-width: 0;
+      padding: 28px 32px;
       overflow-y: auto;
     }
 
@@ -1457,9 +1462,10 @@
 
     /* ── PANEL USUARIOS (ADMIN) ── */
     #panel-usuarios {
-      max-width: 860px;
+      max-width: 1280px;
+      width: 100%;
       margin: 0 auto;
-      padding: 36px 20px 80px;
+      padding: 32px 24px 80px;
       display: none;
     }
 
@@ -1857,16 +1863,25 @@
     /* section-card needs relative for drag-handle absolute */
     .section-card { position: relative; }
 
-    @media(max-width:768px) {
+    @media(max-width:900px) {
+      .detail-sidebar { width: 240px; min-width: 200px; }
+      .detail-content { padding: 20px 22px; }
+    }
+
+    @media(max-width:700px) {
+      #sections-list { grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 14px; }
       .detail-layout { flex-direction: column; }
-      .detail-sidebar { width: 100%; border-right: none; border-bottom: 1px solid var(--border); }
-      .detail-lessons-list { max-height: 240px; }
+      .detail-sidebar { width: 100%; min-width: 0; border-right: none; border-bottom: 1px solid var(--border); }
+      .detail-lessons-list { max-height: 220px; overflow-y: auto; }
+      .detail-content { padding: 18px 18px; }
+      .detail-content-title { font-size: 18px; }
     }
 
     @media(max-width:600px) {
       #main-layout {
-        padding: 20px 14px 60px;
+        padding: 16px 12px 60px;
       }
+      #sections-list { grid-template-columns: 1fr; gap: 12px; }
 
       .modal {
         padding: 20px;
@@ -1903,14 +1918,7 @@
         display: none;
       }
     }
-    /* Ampliar el ancho máximo para mejor distribución */
-#main-layout {
-  max-width: 1024px;
-  margin: 0 auto;
-  padding: 36px 20px 80px;
-}
-
-/* Responsividad en tablas del panel de administración */
+    /* Responsividad en tablas del panel de administración */
 .table-wrap {
   width: 100%;
   overflow-x: auto;
