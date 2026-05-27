@@ -1,891 +1,2266 @@
 <!DOCTYPE html>
 <html lang="es">
+
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>AulaVirtual</title>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,400&family=DM+Serif+Display:ital@0;1&display=swap" rel="stylesheet" />
+  <link
+    href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,400&family=DM+Serif+Display:ital@0;1&display=swap"
+    rel="stylesheet" />
   <style>
     :root {
-      --bg: #f5f4f0;
+      /* Fondo y superficies más limpias */
+      --bg: #f8fafc;
       --surface: #ffffff;
-      --surface2: #f0ede8;
-      --border: #e2ddd7;
-      --accent: #2d5be3;
-      --accent-soft: #eef1fd;
-      --accent-dark: #1e3fa8;
+      --surface2: #f1f5f9;
+      --border: #e2e8f0;
+
+      /* Identidad Visual Premium */
+      --accent: #F97316;
+      --accent-soft: #ffedd5;
+      --accent-dark: #ea580c;
+
+      /* Tonos de sistema */
       --success: #16a34a;
       --success-soft: #dcfce7;
       --danger: #dc2626;
       --danger-soft: #fee2e2;
       --warn: #d97706;
       --warn-soft: #fef3c7;
-      --text: #1a1916;
-      --text-muted: #6b6760;
-      --text-light: #9d9894;
-      --admin-bar: #1a1916;
+
+      /* Tipografía y Barra de Administración */
+      --text: #1e293b;
+      --text-muted: #64748b;
+      --text-light: #94a3b8;
+      --admin-bar: #0F172A;
+
+      /* Estructura */
       --radius-sm: 6px;
       --radius: 12px;
       --radius-lg: 18px;
-      --shadow-sm: 0 1px 3px rgba(0,0,0,.08);
-      --shadow: 0 4px 16px rgba(0,0,0,.10);
-      --shadow-lg: 0 12px 40px rgba(0,0,0,.14);
-      --transition: .2s ease;
+      --shadow-sm: 0 1px 3px rgba(0, 0, 0, .08);
+      --shadow: 0 4px 16px rgba(0, 0, 0, .10);
+      --shadow-lg: 0 12px 40px rgba(0, 0, 0, .14);
+
+      /* Transición orgánica */
+      --transition: .3s cubic-bezier(0.4, 0.0, 0.2, 1);
     }
-    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
-    html{scroll-behavior:smooth;}
-    body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;font-size:15px;line-height:1.6;}
-    img{max-width:100%;display:block;}
-    a{color:var(--accent);text-decoration:none;}
-    a:hover{text-decoration:underline;}
-    button{cursor:pointer;font-family:inherit;}
+
+    *,
+    *::before,
+    *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      font-family: 'DM Sans', sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      font-size: 15px;
+      line-height: 1.6;
+    }
+
+    img {
+      max-width: 100%;
+      display: block;
+    }
+
+    a {
+      color: var(--accent);
+      text-decoration: none;
+    }
+
+    a:hover {
+      text-decoration: underline;
+    }
+
+    button {
+      cursor: pointer;
+      font-family: inherit;
+    }
 
     /* ── LOADER ── */
-    #loader{position:fixed;inset:0;background:var(--bg);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:16px;z-index:500;}
-    .spinner{width:44px;height:44px;border:3px solid var(--border);border-top-color:var(--accent);border-radius:50%;animation:spin .7s linear infinite;}
-    @keyframes spin{to{transform:rotate(360deg);}}
-    #loader p{color:var(--text-muted);font-size:14px;}
-    #error-msg{display:none;background:var(--danger-soft);color:#991b1b;border-radius:var(--radius);padding:12px 18px;font-size:13px;max-width:420px;text-align:center;line-height:1.5;}
+    #loader {
+      position: fixed;
+      inset: 0;
+      background: var(--bg);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 16px;
+      z-index: 500;
+    }
+
+    .spinner {
+      width: 44px;
+      height: 44px;
+      border: 3px solid var(--border);
+      border-top-color: var(--accent);
+      border-radius: 50%;
+      animation: spin .7s linear infinite;
+    }
+
+    @keyframes spin {
+      to {
+        transform: rotate(360deg);
+      }
+    }
+
+    #loader p {
+      color: var(--text-muted);
+      font-size: 14px;
+    }
+
+    #error-msg {
+      display: none;
+      background: var(--danger-soft);
+      color: #991b1b;
+      border-radius: var(--radius);
+      padding: 12px 18px;
+      font-size: 13px;
+      max-width: 420px;
+      text-align: center;
+      line-height: 1.5;
+    }
 
     /* ── PANTALLA DE ACCESO ── */
-    #access-screen{
-      position:fixed;inset:0;background:var(--bg);display:none;
-      align-items:center;justify-content:center;z-index:400;padding:20px;
+    #access-screen {
+      position: fixed;
+      inset: 0;
+      background: var(--bg);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      z-index: 400;
+      padding: 20px;
     }
-    #access-screen.visible{display:flex;}
-    .access-box{
-      background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg);
-      padding:40px 36px;width:100%;max-width:420px;box-shadow:var(--shadow-lg);
-      animation:slideUp .25s ease;
+
+    #access-screen.visible {
+      display: flex;
     }
-    @keyframes slideUp{from{transform:translateY(14px);opacity:0;}to{transform:translateY(0);opacity:1;}}
-    .access-logo{display:flex;align-items:center;gap:10px;margin-bottom:28px;}
-    .access-logo-icon{width:40px;height:40px;background:var(--accent);border-radius:11px;display:flex;align-items:center;justify-content:center;color:#fff;font-size:20px;}
-    .access-logo-text{font-family:'DM Serif Display',serif;font-size:22px;color:var(--text);}
-    .access-logo-text span{color:var(--accent);}
-    .access-title{font-family:'DM Serif Display',serif;font-size:22px;margin-bottom:6px;}
-    .access-subtitle{color:var(--text-muted);font-size:14px;margin-bottom:28px;}
-    .access-form-group{margin-bottom:16px;}
-    .access-form-group label{display:block;font-size:13px;font-weight:600;margin-bottom:6px;color:var(--text-muted);}
-    .access-form-group input{width:100%;padding:10px 13px;border:1px solid var(--border);border-radius:var(--radius-sm);font-family:inherit;font-size:14px;color:var(--text);background:var(--surface);outline:none;transition:border-color var(--transition);}
-    .access-form-group input:focus{border-color:var(--accent);}
-    .access-error{display:none;background:var(--danger-soft);color:#991b1b;border-radius:var(--radius-sm);padding:9px 13px;font-size:13px;margin-bottom:14px;}
-    .access-btn{width:100%;padding:11px;background:var(--accent);color:#fff;border:none;border-radius:var(--radius-sm);font-size:14px;font-weight:600;transition:background var(--transition);margin-top:4px;}
-    .access-btn:hover{background:var(--accent-dark);}
-    .access-btn:disabled{opacity:.6;cursor:not-allowed;}
+
+    .access-box {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      padding: 40px 36px;
+      width: 100%;
+      max-width: 420px;
+      box-shadow: var(--shadow-lg);
+      animation: slideUp .25s ease;
+    }
+
+    @keyframes slideUp {
+      from {
+        transform: translateY(14px);
+        opacity: 0;
+      }
+
+      to {
+        transform: translateY(0);
+        opacity: 1;
+      }
+    }
+
+    .access-logo {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 28px;
+    }
+
+    .access-logo-icon {
+      width: 40px;
+      height: 40px;
+      background: var(--accent);
+      border-radius: 11px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #fff;
+      font-size: 20px;
+    }
+
+    .access-logo-text {
+      font-family: 'DM Serif Display', serif;
+      font-size: 22px;
+      color: var(--text);
+    }
+
+    .access-logo-text span {
+      color: var(--accent);
+    }
+
+    .access-title {
+      font-family: 'DM Serif Display', serif;
+      font-size: 22px;
+      margin-bottom: 6px;
+    }
+
+    .access-subtitle {
+      color: var(--text-muted);
+      font-size: 14px;
+      margin-bottom: 28px;
+    }
+
+    .access-form-group {
+      margin-bottom: 16px;
+    }
+
+    .access-form-group label {
+      display: block;
+      font-size: 13px;
+      font-weight: 600;
+      margin-bottom: 6px;
+      color: var(--text-muted);
+    }
+
+    .access-form-group input {
+      width: 100%;
+      padding: 10px 13px;
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      font-family: inherit;
+      font-size: 14px;
+      color: var(--text);
+      background: var(--surface);
+      outline: none;
+      transition: border-color var(--transition);
+    }
+
+    .access-form-group input:focus {
+      border-color: var(--accent);
+    }
+
+    .access-error {
+      display: none;
+      background: var(--danger-soft);
+      color: #991b1b;
+      border-radius: var(--radius-sm);
+      padding: 9px 13px;
+      font-size: 13px;
+      margin-bottom: 14px;
+    }
+
+    .access-btn {
+      width: 100%;
+      padding: 11px;
+      background: var(--accent);
+      color: #fff;
+      border: none;
+      border-radius: var(--radius-sm);
+      font-size: 14px;
+      font-weight: 600;
+      transition: background var(--transition);
+      margin-top: 4px;
+    }
+
+    .access-btn:hover {
+      background: var(--accent-dark);
+    }
+
+    .access-btn:disabled {
+      opacity: .6;
+      cursor: not-allowed;
+    }
 
     /* ── ADMIN BAR ── */
-    #admin-bar{display:none;background:var(--admin-bar);color:#fff;padding:0 24px;height:48px;align-items:center;gap:12px;position:sticky;top:0;z-index:100;font-size:13px;font-weight:500;}
-    #admin-bar.visible{display:flex;}
-    #admin-bar .ab-badge{background:var(--accent);border-radius:999px;padding:2px 10px;font-size:11px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;}
-    #admin-bar .ab-spacer{flex:1;}
-    #admin-bar button{background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.18);border-radius:var(--radius-sm);color:#fff;padding:5px 14px;font-size:13px;transition:background var(--transition);white-space:nowrap;}
-    #admin-bar button:hover{background:rgba(255,255,255,.22);}
-    #admin-bar .btn-danger-admin{background:rgba(220,38,38,.25);border-color:rgba(220,38,38,.4);}
-    #admin-bar .btn-danger-admin:hover{background:rgba(220,38,38,.4);}
-    .sync-dot{display:inline-block;width:7px;height:7px;border-radius:50%;background:#4ade80;animation:pulse 2s infinite;margin-right:4px;}
-    @keyframes pulse{0%,100%{opacity:1}50%{opacity:.35}}
+    #admin-bar {
+      display: none;
+      background: var(--admin-bar);
+      color: #fff;
+      padding: 0 24px;
+      height: 48px;
+      align-items: center;
+      gap: 12px;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      font-size: 13px;
+      font-weight: 500;
+    }
+
+    #admin-bar.visible {
+      display: flex;
+    }
+
+    #admin-bar .ab-badge {
+      background: var(--accent);
+      border-radius: 999px;
+      padding: 2px 10px;
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: .04em;
+      text-transform: uppercase;
+    }
+
+    #admin-bar .ab-spacer {
+      flex: 1;
+    }
+
+    #admin-bar button {
+      background: rgba(255, 255, 255, .12);
+      border: 1px solid rgba(255, 255, 255, .18);
+      border-radius: var(--radius-sm);
+      color: #fff;
+      padding: 5px 14px;
+      font-size: 13px;
+      transition: background var(--transition);
+      white-space: nowrap;
+    }
+
+    #admin-bar button:hover {
+      background: rgba(255, 255, 255, .22);
+    }
+
+    #admin-bar .btn-danger-admin {
+      background: rgba(220, 38, 38, .25);
+      border-color: rgba(220, 38, 38, .4);
+    }
+
+    #admin-bar .btn-danger-admin:hover {
+      background: rgba(220, 38, 38, .4);
+    }
+
+    .sync-dot {
+      display: inline-block;
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: #4ade80;
+      animation: pulse 2s infinite;
+      margin-right: 4px;
+    }
+
+    @keyframes pulse {
+
+      0%,
+      100% {
+        opacity: 1
+      }
+
+      50% {
+        opacity: .35
+      }
+    }
 
     /* ── HEADER ── */
-    #site-header{background:var(--surface);border-bottom:1px solid var(--border);padding:0 24px;height:64px;display:flex;align-items:center;gap:16px;position:sticky;top:0;z-index:90;}
-    #admin-bar.visible~#site-header,#admin-bar.visible+#site-header{top:48px;}
-    #logo-area{display:flex;align-items:center;gap:10px;user-select:none;}
-    #logo-icon{width:36px;height:36px;background:var(--accent);border-radius:10px;display:flex;align-items:center;justify-content:center;color:#fff;font-size:18px;flex-shrink:0;cursor:default;transition:transform var(--transition);}
-    #logo-icon:active{transform:scale(.93);}
-    #logo-text{font-family:'DM Serif Display',serif;font-size:20px;line-height:1;color:var(--text);}
-    #logo-text span{color:var(--accent);}
-    #header-right{margin-left:auto;display:flex;align-items:center;gap:8px;}
-    .progress-badge{background:var(--success-soft);color:var(--success);border-radius:999px;padding:4px 12px;font-size:13px;font-weight:600;}
-    #user-chip{background:var(--accent-soft);color:var(--accent);border-radius:999px;padding:4px 12px;font-size:13px;font-weight:600;display:none;}
+    #site-header {
+      background: var(--surface);
+      border-bottom: 1px solid var(--border);
+      padding: 0 24px;
+      height: 64px;
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      position: sticky;
+      top: 0;
+      z-index: 90;
+    }
+
+    #admin-bar.visible~#site-header,
+    #admin-bar.visible+#site-header {
+      top: 48px;
+    }
+
+    #logo-area {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      user-select: none;
+    }
+
+    #logo-icon {
+      width: 36px;
+      height: 36px;
+      background: var(--accent);
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #fff;
+      font-size: 18px;
+      flex-shrink: 0;
+      cursor: default;
+      transition: transform var(--transition);
+    }
+
+    #logo-icon:active {
+      transform: scale(.93);
+    }
+
+    #logo-text {
+      font-family: 'DM Serif Display', serif;
+      font-size: 20px;
+      line-height: 1;
+      color: var(--text);
+    }
+
+    #logo-text span {
+      color: var(--accent);
+    }
+
+    #header-right {
+      margin-left: auto;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .progress-badge {
+      background: var(--success-soft);
+      color: var(--success);
+      border-radius: 999px;
+      padding: 4px 12px;
+      font-size: 13px;
+      font-weight: 600;
+    }
+
+    #user-chip {
+      background: var(--accent-soft);
+      color: var(--accent);
+      border-radius: 999px;
+      padding: 4px 12px;
+      font-size: 13px;
+      font-weight: 600;
+      display: none;
+    }
 
     /* ── LAYOUT ── */
-    #main-layout{max-width:860px;margin:0 auto;padding:36px 20px 80px;}
+    #main-layout {
+      max-width: 860px;
+      margin: 0 auto;
+      padding: 36px 20px 80px;
+    }
 
     /* ── HERO ── */
-    #course-hero{margin-bottom:32px;}
-    #course-title-wrap{display:flex;align-items:flex-start;gap:12px;}
-    #course-title{font-family:'DM Serif Display',serif;font-size:clamp(24px,4vw,34px);line-height:1.2;flex:1;}
-    #course-desc{color:var(--text-muted);margin-top:8px;font-size:15px;max-width:640px;}
-    .edit-inline-btn{background:none;border:1px dashed var(--border);border-radius:var(--radius-sm);padding:3px 8px;color:var(--text-muted);font-size:12px;display:none;transition:all var(--transition);}
-    .edit-inline-btn:hover{border-color:var(--accent);color:var(--accent);background:var(--accent-soft);}
-    .admin-mode .edit-inline-btn{display:inline-flex;align-items:center;gap:4px;}
+    #course-hero {
+      margin-bottom: 32px;
+    }
+
+    #course-title-wrap {
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+    }
+
+    #course-title {
+      font-family: 'DM Serif Display', serif;
+      font-size: clamp(24px, 4vw, 34px);
+      line-height: 1.2;
+      flex: 1;
+    }
+
+    #course-desc {
+      color: var(--text-muted);
+      margin-top: 8px;
+      font-size: 15px;
+      max-width: 640px;
+    }
+
+    .edit-inline-btn {
+      background: none;
+      border: 1px dashed var(--border);
+      border-radius: var(--radius-sm);
+      padding: 3px 8px;
+      color: var(--text-muted);
+      font-size: 12px;
+      display: none;
+      transition: all var(--transition);
+    }
+
+    .edit-inline-btn:hover {
+      border-color: var(--accent);
+      color: var(--accent);
+      background: var(--accent-soft);
+    }
+
+    .admin-mode .edit-inline-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+    }
 
     /* ── PROGRESS ── */
-    #progress-wrap{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:16px 20px;margin-bottom:28px;display:flex;align-items:center;gap:16px;}
-    #progress-label{font-size:14px;font-weight:500;color:var(--text-muted);white-space:nowrap;}
-    #progress-bar-outer{flex:1;height:8px;background:var(--surface2);border-radius:99px;overflow:hidden;}
-    #progress-bar-inner{height:100%;background:var(--accent);border-radius:99px;width:0%;transition:width .5s ease;}
-    #progress-pct{font-size:14px;font-weight:700;color:var(--accent);min-width:36px;text-align:right;}
+    #progress-wrap {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 16px 20px;
+      margin-bottom: 28px;
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+
+    #progress-label {
+      font-size: 14px;
+      font-weight: 500;
+      color: var(--text-muted);
+      white-space: nowrap;
+    }
+
+    #progress-bar-outer {
+      flex: 1;
+      height: 8px;
+      background: var(--surface2);
+      border-radius: 99px;
+      overflow: hidden;
+    }
+
+    #progress-bar-inner {
+      height: 100%;
+      background: var(--accent);
+      border-radius: 99px;
+      width: 0%;
+      transition: width .5s ease;
+    }
+
+    #progress-pct {
+      font-size: 14px;
+      font-weight: 700;
+      color: var(--accent);
+      min-width: 36px;
+      text-align: right;
+    }
 
     /* ── SECTIONS ── */
-    #sections-list{display:flex;flex-direction:column;gap:16px;}
-    .section-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg);overflow:hidden;transition:box-shadow var(--transition);}
-    .section-card:hover{box-shadow:var(--shadow);}
-    .section-card.dragging{opacity:.5;box-shadow:var(--shadow-lg);}
-    .section-card.drag-over{border:2px dashed var(--accent);}
-    .section-header{display:flex;align-items:center;gap:10px;padding:16px 20px;cursor:pointer;background:var(--surface);transition:background var(--transition);user-select:none;}
-    .section-header:hover{background:var(--surface2);}
-    .drag-handle{display:none;color:var(--text-light);font-size:16px;cursor:grab;padding:4px;border-radius:4px;flex-shrink:0;}
-    .drag-handle:active{cursor:grabbing;}
-    .admin-mode .drag-handle{display:flex;align-items:center;}
-    .section-chevron{color:var(--text-muted);font-size:14px;transition:transform var(--transition);flex-shrink:0;}
-    .section-card.collapsed .section-chevron{transform:rotate(-90deg);}
-    .section-title-text{font-weight:600;font-size:15px;flex:1;}
-    .section-progress-mini{font-size:12px;color:var(--text-muted);background:var(--surface2);padding:3px 10px;border-radius:99px;white-space:nowrap;}
-    .section-admin-btns{display:none;gap:6px;flex-shrink:0;}
-    .admin-mode .section-admin-btns{display:flex;}
-    .section-body{border-top:1px solid var(--border);padding:12px 16px 16px;}
-    .section-card.collapsed .section-body{display:none;}
+    #sections-list {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    .section-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      overflow: hidden;
+      transition: box-shadow var(--transition);
+    }
+
+    .section-card:hover {
+      box-shadow: var(--shadow);
+    }
+
+    .section-card.dragging {
+      opacity: .5;
+      box-shadow: var(--shadow-lg);
+    }
+
+    .section-card.drag-over {
+      border: 2px dashed var(--accent);
+    }
+
+    .section-header {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 16px 20px;
+      cursor: pointer;
+      background: var(--surface);
+      transition: background var(--transition);
+      user-select: none;
+    }
+
+    .section-header:hover {
+      background: var(--surface2);
+    }
+
+    .drag-handle {
+      display: none;
+      color: var(--text-light);
+      font-size: 16px;
+      cursor: grab;
+      padding: 4px;
+      border-radius: 4px;
+      flex-shrink: 0;
+    }
+
+    .drag-handle:active {
+      cursor: grabbing;
+    }
+
+    .admin-mode .drag-handle {
+      display: flex;
+      align-items: center;
+    }
+
+    .section-chevron {
+      color: var(--text-muted);
+      font-size: 14px;
+      transition: transform var(--transition);
+      flex-shrink: 0;
+    }
+
+    .section-card.collapsed .section-chevron {
+      transform: rotate(-90deg);
+    }
+
+    .section-title-text {
+      font-weight: 600;
+      font-size: 15px;
+      flex: 1;
+    }
+
+    .section-progress-mini {
+      font-size: 12px;
+      color: var(--text-muted);
+      background: var(--surface2);
+      padding: 3px 10px;
+      border-radius: 99px;
+      white-space: nowrap;
+    }
+
+    .section-admin-btns {
+      display: none;
+      gap: 6px;
+      flex-shrink: 0;
+    }
+
+    .admin-mode .section-admin-btns {
+      display: flex;
+    }
+
+    .section-body {
+      border-top: 1px solid var(--border);
+      padding: 12px 16px 16px;
+    }
+
+    .section-card.collapsed .section-body {
+      display: none;
+    }
 
     /* ── ITEMS ── */
-    .items-list{display:flex;flex-direction:column;gap:10px;}
-    .item-card{border:1px solid var(--border);border-radius:var(--radius);overflow:hidden;transition:box-shadow var(--transition);background:var(--surface);}
-    .item-card:hover{box-shadow:var(--shadow-sm);}
-    .item-card.dragging{opacity:.5;}
-    .item-card.drag-over{border:2px dashed var(--accent);}
-    .item-header{display:flex;align-items:center;gap:10px;padding:12px 14px;}
-    .item-drag-handle{display:none;color:var(--text-light);font-size:14px;cursor:grab;padding:2px 4px;flex-shrink:0;}
-    .item-drag-handle:active{cursor:grabbing;}
-    .admin-mode .item-drag-handle{display:flex;align-items:center;}
-    .item-checkbox{width:20px;height:20px;border-radius:6px;border:2px solid var(--border);appearance:none;-webkit-appearance:none;cursor:pointer;flex-shrink:0;position:relative;transition:all var(--transition);background:var(--surface);}
-    .item-checkbox:checked{background:var(--success);border-color:var(--success);}
-    .item-checkbox:checked::after{content:'';position:absolute;left:5px;top:2px;width:6px;height:10px;border:2px solid #fff;border-top:none;border-left:none;transform:rotate(45deg);}
-    .item-checkbox:hover{border-color:var(--success);}
-    .item-type-badge{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;border-radius:4px;padding:2px 7px;flex-shrink:0;}
-    .badge-video{background:#ede9fe;color:#6d28d9;}
-    .badge-text{background:#e0f2fe;color:#0369a1;}
-    .badge-imagen{background:#fce7f3;color:#be185d;}
-    .item-imagen-wrap{border-radius:var(--radius-sm);overflow:hidden;margin-bottom:10px;}
-    .item-imagen-wrap img{width:100%;display:block;max-height:400px;object-fit:contain;background:#f5f4f0;}
-    .item-title{font-weight:500;font-size:14px;flex:1;cursor:pointer;}
-    .item-card.completed .item-title{color:var(--text-muted);text-decoration:line-through;}
-    .item-admin-btns{display:none;gap:5px;flex-shrink:0;}
-    .admin-mode .item-admin-btns{display:flex;}
-    .item-body{padding:0 14px 14px 46px;}
-    .item-body:empty{display:none;}
-    .item-description{color:var(--text-muted);font-size:13.5px;margin-bottom:10px;white-space:pre-wrap;}
-    .video-wrap{position:relative;padding-bottom:56.25%;height:0;overflow:hidden;border-radius:var(--radius-sm);background:#000;margin-bottom:10px;}
-    .video-wrap iframe{position:absolute;top:0;left:0;width:100%;height:100%;border:none;}
-    .attachments-list{display:flex;flex-wrap:wrap;gap:8px;margin-top:6px;}
-    .link-chip{display:inline-flex;align-items:center;gap:7px;background:var(--accent-soft);border:1px solid var(--accent);border-radius:8px;padding:5px 14px 5px 10px;font-size:13px;font-weight:500;color:var(--accent);cursor:pointer;transition:all var(--transition);text-decoration:none;}
-    .link-chip:hover{background:var(--accent);color:#fff;text-decoration:none;}
-    .link-chip .chip-icon{font-size:15px;flex-shrink:0;}
-    .link-chip .chip-label{text-decoration:underline;text-underline-offset:2px;}
-    .link-chip:hover .chip-label{text-decoration:underline;}
+    .items-list {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .item-card {
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      overflow: hidden;
+      transition: box-shadow var(--transition);
+      background: var(--surface);
+    }
+
+    .item-card:hover {
+      box-shadow: var(--shadow-sm);
+    }
+
+    .item-card.dragging {
+      opacity: .5;
+    }
+
+    .item-card.drag-over {
+      border: 2px dashed var(--accent);
+    }
+
+    .item-header {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 12px 14px;
+    }
+
+    .item-drag-handle {
+      display: none;
+      color: var(--text-light);
+      font-size: 14px;
+      cursor: grab;
+      padding: 2px 4px;
+      flex-shrink: 0;
+    }
+
+    .item-drag-handle:active {
+      cursor: grabbing;
+    }
+
+    .admin-mode .item-drag-handle {
+      display: flex;
+      align-items: center;
+    }
+
+    .item-checkbox {
+      width: 20px;
+      height: 20px;
+      border-radius: 6px;
+      border: 2px solid var(--border);
+      appearance: none;
+      -webkit-appearance: none;
+      cursor: pointer;
+      flex-shrink: 0;
+      position: relative;
+      transition: all var(--transition);
+      background: var(--surface);
+    }
+
+    .item-checkbox:checked {
+      background: var(--success);
+      border-color: var(--success);
+    }
+
+    .item-checkbox:checked::after {
+      content: '';
+      position: absolute;
+      left: 5px;
+      top: 2px;
+      width: 6px;
+      height: 10px;
+      border: 2px solid #fff;
+      border-top: none;
+      border-left: none;
+      transform: rotate(45deg);
+    }
+
+    .item-checkbox:hover {
+      border-color: var(--success);
+    }
+
+    .item-type-badge {
+      font-size: 11px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: .05em;
+      border-radius: 4px;
+      padding: 2px 7px;
+      flex-shrink: 0;
+    }
+
+    .badge-video {
+      background: #ede9fe;
+      color: #6d28d9;
+    }
+
+    .badge-text {
+      background: #e0f2fe;
+      color: #0369a1;
+    }
+
+    .badge-imagen {
+      background: #fce7f3;
+      color: #be185d;
+    }
+
+    .item-imagen-wrap {
+      border-radius: var(--radius-sm);
+      overflow: hidden;
+      margin-bottom: 10px;
+    }
+
+    .item-imagen-wrap img {
+      width: 100%;
+      display: block;
+      max-height: 400px;
+      object-fit: contain;
+      background: #f5f4f0;
+    }
+
+    .item-title {
+      font-weight: 500;
+      font-size: 14px;
+      flex: 1;
+      cursor: pointer;
+    }
+
+    .item-card.completed .item-title {
+      color: var(--text-muted);
+      text-decoration: line-through;
+    }
+
+    .item-admin-btns {
+      display: none;
+      gap: 5px;
+      flex-shrink: 0;
+    }
+
+    .admin-mode .item-admin-btns {
+      display: flex;
+    }
+
+    .item-body {
+      padding: 0 14px 14px 46px;
+    }
+
+    .item-body:empty {
+      display: none;
+    }
+
+    .item-description {
+      color: var(--text-muted);
+      font-size: 13.5px;
+      margin-bottom: 10px;
+      white-space: pre-wrap;
+    }
+
+    .video-wrap {
+      position: relative;
+      aspect-ratio: 16 / 9;
+      width: 100%;
+      overflow: hidden;
+      border-radius: var(--radius-sm);
+      background: #000;
+      margin-bottom: 10px;
+    }
+
+    .video-wrap iframe {
+      width: 100%;
+      height: 100%;
+      border: none;
+    }
+
+    .attachments-list {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: 6px;
+    }
+
+    .link-chip {
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      background: var(--accent-soft);
+      border: 1px solid var(--accent);
+      border-radius: 8px;
+      padding: 5px 14px 5px 10px;
+      font-size: 13px;
+      font-weight: 500;
+      color: var(--accent);
+      cursor: pointer;
+      transition: all var(--transition);
+      text-decoration: none;
+    }
+
+    .link-chip:hover {
+      background: var(--accent);
+      color: #fff;
+      text-decoration: none;
+    }
+
+    .link-chip .chip-icon {
+      font-size: 15px;
+      flex-shrink: 0;
+    }
+
+    .link-chip .chip-label {
+      text-decoration: underline;
+      text-underline-offset: 2px;
+    }
+
+    .link-chip:hover .chip-label {
+      text-decoration: underline;
+    }
 
     /* ── ADD BUTTONS ── */
-    #btn-add-section{display:none;margin-top:16px;width:100%;padding:14px;border:2px dashed var(--border);border-radius:var(--radius-lg);background:none;color:var(--text-muted);font-size:14px;font-weight:500;transition:all var(--transition);gap:8px;align-items:center;justify-content:center;}
-    #btn-add-section:hover{border-color:var(--accent);color:var(--accent);background:var(--accent-soft);}
-    .admin-mode #btn-add-section{display:flex;}
-    .btn-add-item{display:none;margin-top:10px;width:100%;padding:10px;border:1px dashed var(--border);border-radius:var(--radius);background:none;color:var(--text-muted);font-size:13px;font-weight:500;transition:all var(--transition);gap:6px;align-items:center;justify-content:center;}
-    .btn-add-item:hover{border-color:var(--accent);color:var(--accent);background:var(--accent-soft);}
-    .admin-mode .btn-add-item{display:flex;}
+    #btn-add-section {
+      display: none;
+      margin-top: 16px;
+      width: 100%;
+      padding: 14px;
+      border: 2px dashed var(--border);
+      border-radius: var(--radius-lg);
+      background: none;
+      color: var(--text-muted);
+      font-size: 14px;
+      font-weight: 500;
+      transition: all var(--transition);
+      gap: 8px;
+      align-items: center;
+      justify-content: center;
+    }
+
+    #btn-add-section:hover {
+      border-color: var(--accent);
+      color: var(--accent);
+      background: var(--accent-soft);
+    }
+
+    .admin-mode #btn-add-section {
+      display: flex;
+    }
+
+    .btn-add-item {
+      display: none;
+      margin-top: 10px;
+      width: 100%;
+      padding: 10px;
+      border: 1px dashed var(--border);
+      border-radius: var(--radius);
+      background: none;
+      color: var(--text-muted);
+      font-size: 13px;
+      font-weight: 500;
+      transition: all var(--transition);
+      gap: 6px;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .btn-add-item:hover {
+      border-color: var(--accent);
+      color: var(--accent);
+      background: var(--accent-soft);
+    }
+
+    .admin-mode .btn-add-item {
+      display: flex;
+    }
 
     /* ── BUTTONS ── */
-    .btn{display:inline-flex;align-items:center;gap:6px;border:none;border-radius:var(--radius-sm);padding:7px 14px;font-size:13px;font-weight:500;transition:all var(--transition);}
-    .btn-primary{background:var(--accent);color:#fff;}
-    .btn-primary:hover{background:var(--accent-dark);}
-    .btn-primary:disabled{opacity:.6;cursor:not-allowed;}
-    .btn-secondary{background:var(--surface2);color:var(--text);border:1px solid var(--border);}
-    .btn-secondary:hover{background:var(--border);}
-    .btn-danger{background:var(--danger-soft);color:var(--danger);border:1px solid #fca5a5;}
-    .btn-danger:hover{background:#fca5a5;}
-    .btn-warn{background:var(--warn-soft);color:var(--warn);border:1px solid #fde68a;}
-    .btn-warn:hover{background:#fde68a;}
-    .btn-success{background:var(--success-soft);color:var(--success);border:1px solid #86efac;}
-    .btn-success:hover{background:#86efac;}
-    .btn-icon{padding:5px 7px;font-size:14px;}
-    .btn-sm{padding:4px 10px;font-size:12px;}
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      border: none;
+      border-radius: var(--radius-sm);
+      padding: 7px 14px;
+      font-size: 13px;
+      font-weight: 500;
+      transition: all var(--transition);
+    }
+
+    .btn-primary {
+      background: var(--accent);
+      color: #fff;
+    }
+
+    .btn-primary:hover {
+      background: var(--accent-dark);
+    }
+
+    .btn-primary:disabled {
+      opacity: .6;
+      cursor: not-allowed;
+    }
+
+    .btn-secondary {
+      background: var(--surface2);
+      color: var(--text);
+      border: 1px solid var(--border);
+    }
+
+    .btn-secondary:hover {
+      background: var(--border);
+    }
+
+    .btn-danger {
+      background: var(--danger-soft);
+      color: var(--danger);
+      border: 1px solid #fca5a5;
+    }
+
+    .btn-danger:hover {
+      background: #fca5a5;
+    }
+
+    .btn-warn {
+      background: var(--warn-soft);
+      color: var(--warn);
+      border: 1px solid #fde68a;
+    }
+
+    .btn-warn:hover {
+      background: #fde68a;
+    }
+
+    .btn-success {
+      background: var(--success-soft);
+      color: var(--success);
+      border: 1px solid #86efac;
+    }
+
+    .btn-success:hover {
+      background: #86efac;
+    }
+
+    .btn-icon {
+      padding: 5px 7px;
+      font-size: 14px;
+    }
+
+    .btn-sm {
+      padding: 4px 10px;
+      font-size: 12px;
+    }
 
     /* ── MODAL ── */
-    .modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.45);display:flex;align-items:center;justify-content:center;z-index:200;padding:20px;backdrop-filter:blur(3px);animation:fadeIn .15s ease;}
-    @keyframes fadeIn{from{opacity:0;}to{opacity:1;}}
-    .modal{background:var(--surface);border-radius:var(--radius-lg);padding:28px;width:100%;max-width:520px;box-shadow:var(--shadow-lg);animation:slideUp .2s ease;max-height:90vh;overflow-y:auto;}
-    .modal-wide{max-width:780px;}
-    .modal-title{font-family:'DM Serif Display',serif;font-size:20px;margin-bottom:20px;}
-    .form-group{margin-bottom:16px;}
-    .form-group label{display:block;font-size:13px;font-weight:600;margin-bottom:6px;color:var(--text-muted);}
-    .form-group input[type=text],.form-group input[type=url],.form-group input[type=password],.form-group textarea,.form-group select{width:100%;padding:9px 12px;border:1px solid var(--border);border-radius:var(--radius-sm);font-family:inherit;font-size:14px;color:var(--text);background:var(--surface);transition:border-color var(--transition);outline:none;}
-    .form-group input:focus,.form-group textarea:focus,.form-group select:focus{border-color:var(--accent);}
-    .form-group textarea{resize:vertical;min-height:80px;}
-    .modal-actions{display:flex;justify-content:flex-end;gap:10px;margin-top:24px;}
-    .file-input-wrap{border:2px dashed var(--border);border-radius:var(--radius);padding:16px;text-align:center;cursor:pointer;transition:all var(--transition);position:relative;}
-    .file-input-wrap:hover{border-color:var(--accent);background:var(--accent-soft);}
-    .file-input-wrap input[type=file]{position:absolute;inset:0;opacity:0;cursor:pointer;width:100%;height:100%;}
-    .file-input-label{font-size:13px;color:var(--text-muted);pointer-events:none;}
-    .link-add-row{display:flex;gap:8px;align-items:center;flex-wrap:wrap;}
-    .link-add-row input{flex:1;min-width:120px;}
-    .link-add-row .btn{flex-shrink:0;white-space:nowrap;}
-    #modal-links-list{margin-top:8px;display:flex;flex-direction:column;gap:6px;}
-    .modal-link-item{display:flex;align-items:center;gap:8px;background:var(--accent-soft);border:1px solid var(--accent);border-radius:var(--radius-sm);padding:6px 10px;font-size:13px;}
-    .modal-link-item .ml-icon{flex-shrink:0;}
-    .modal-link-item .ml-name{flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:var(--accent);font-weight:500;}
-    .modal-link-item .ml-url{font-size:11px;color:var(--text-muted);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:160px;}
-    .modal-link-item button{background:none;border:none;color:var(--danger);font-size:14px;cursor:pointer;}
-    .type-selector{display:flex;gap:8px;margin-bottom:16px;}
-    .type-btn{flex:1;padding:10px;border:2px solid var(--border);border-radius:var(--radius);background:none;font-size:13px;font-weight:500;transition:all var(--transition);cursor:pointer;text-align:center;}
-    .type-btn.active{border-color:var(--accent);background:var(--accent-soft);color:var(--accent);}
+    .modal-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, .45);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 200;
+      padding: 20px;
+      backdrop-filter: blur(3px);
+      animation: fadeIn .15s ease;
+    }
+
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+      }
+
+      to {
+        opacity: 1;
+      }
+    }
+
+    .modal {
+      background: var(--surface);
+      border-radius: var(--radius-lg);
+      padding: 28px;
+      width: 100%;
+      max-width: 520px;
+      box-shadow: var(--shadow-lg);
+      animation: slideUp .2s ease;
+      max-height: 90vh;
+      overflow-y: auto;
+    }
+
+    .modal-wide {
+      max-width: 780px;
+    }
+
+    .modal-title {
+      font-family: 'DM Serif Display', serif;
+      font-size: 20px;
+      margin-bottom: 20px;
+    }
+
+    .form-group {
+      margin-bottom: 16px;
+    }
+
+    .form-group label {
+      display: block;
+      font-size: 13px;
+      font-weight: 600;
+      margin-bottom: 6px;
+      color: var(--text-muted);
+    }
+
+    .form-group input[type=text],
+    .form-group input[type=url],
+    .form-group input[type=password],
+    .form-group textarea,
+    .form-group select {
+      width: 100%;
+      padding: 9px 12px;
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      font-family: inherit;
+      font-size: 14px;
+      color: var(--text);
+      background: var(--surface);
+      transition: border-color var(--transition);
+      outline: none;
+    }
+
+    .form-group input:focus,
+    .form-group textarea:focus,
+    .form-group select:focus {
+      border-color: var(--accent);
+    }
+
+    .form-group textarea {
+      resize: vertical;
+      min-height: 80px;
+    }
+
+    .modal-actions {
+      display: flex;
+      justify-content: flex-end;
+      gap: 10px;
+      margin-top: 24px;
+    }
+
+    .file-input-wrap {
+      border: 2px dashed var(--border);
+      border-radius: var(--radius);
+      padding: 16px;
+      text-align: center;
+      cursor: pointer;
+      transition: all var(--transition);
+      position: relative;
+    }
+
+    .file-input-wrap:hover {
+      border-color: var(--accent);
+      background: var(--accent-soft);
+    }
+
+    .file-input-wrap input[type=file] {
+      position: absolute;
+      inset: 0;
+      opacity: 0;
+      cursor: pointer;
+      width: 100%;
+      height: 100%;
+    }
+
+    .file-input-label {
+      font-size: 13px;
+      color: var(--text-muted);
+      pointer-events: none;
+    }
+
+    .link-add-row {
+      display: flex;
+      gap: 8px;
+      align-items: center;
+      flex-wrap: wrap;
+    }
+
+    .link-add-row input {
+      flex: 1;
+      min-width: 120px;
+    }
+
+    .link-add-row .btn {
+      flex-shrink: 0;
+      white-space: nowrap;
+    }
+
+    #modal-links-list {
+      margin-top: 8px;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .modal-link-item {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      background: var(--accent-soft);
+      border: 1px solid var(--accent);
+      border-radius: var(--radius-sm);
+      padding: 6px 10px;
+      font-size: 13px;
+    }
+
+    .modal-link-item .ml-icon {
+      flex-shrink: 0;
+    }
+
+    .modal-link-item .ml-name {
+      flex: 1;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      color: var(--accent);
+      font-weight: 500;
+    }
+
+    .modal-link-item .ml-url {
+      font-size: 11px;
+      color: var(--text-muted);
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      max-width: 160px;
+    }
+
+    .modal-link-item button {
+      background: none;
+      border: none;
+      color: var(--danger);
+      font-size: 14px;
+      cursor: pointer;
+    }
+
+    .type-selector {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 16px;
+    }
+
+    .type-btn {
+      flex: 1;
+      padding: 10px;
+      border: 2px solid var(--border);
+      border-radius: var(--radius);
+      background: none;
+      font-size: 13px;
+      font-weight: 500;
+      transition: all var(--transition);
+      cursor: pointer;
+      text-align: center;
+    }
+
+    .type-btn.active {
+      border-color: var(--accent);
+      background: var(--accent-soft);
+      color: var(--accent);
+    }
 
     /* ── PANEL USUARIOS (ADMIN) ── */
-    #panel-usuarios{
-      max-width:860px;margin:0 auto;padding:36px 20px 80px;
-      display:none;
+    #panel-usuarios {
+      max-width: 860px;
+      margin: 0 auto;
+      padding: 36px 20px 80px;
+      display: none;
     }
-    #panel-usuarios.visible{display:block;}
-    .panel-tabs{display:flex;gap:8px;margin-bottom:24px;border-bottom:2px solid var(--border);padding-bottom:0;}
-    .panel-tab{padding:10px 18px;border:none;background:none;font-size:14px;font-weight:600;color:var(--text-muted);cursor:pointer;border-bottom:2px solid transparent;margin-bottom:-2px;transition:all var(--transition);}
-    .panel-tab.active{color:var(--accent);border-bottom-color:var(--accent);}
-    .panel-tab:hover:not(.active){color:var(--text);}
-    .panel-section{display:none;}
-    .panel-section.visible{display:block;}
-    .panel-title{font-family:'DM Serif Display',serif;font-size:24px;margin-bottom:6px;}
-    .panel-subtitle{color:var(--text-muted);font-size:14px;margin-bottom:24px;}
+
+    #panel-usuarios.visible {
+      display: block;
+    }
+
+    .panel-tabs {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 24px;
+      border-bottom: 2px solid var(--border);
+      padding-bottom: 0;
+    }
+
+    .panel-tab {
+      padding: 10px 18px;
+      border: none;
+      background: none;
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--text-muted);
+      cursor: pointer;
+      border-bottom: 2px solid transparent;
+      margin-bottom: -2px;
+      transition: all var(--transition);
+    }
+
+    .panel-tab.active {
+      color: var(--accent);
+      border-bottom-color: var(--accent);
+    }
+
+    .panel-tab:hover:not(.active) {
+      color: var(--text);
+    }
+
+    .panel-section {
+      display: none;
+    }
+
+    .panel-section.visible {
+      display: block;
+    }
+
+    .panel-title {
+      font-family: 'DM Serif Display', serif;
+      font-size: 24px;
+      margin-bottom: 6px;
+    }
+
+    .panel-subtitle {
+      color: var(--text-muted);
+      font-size: 14px;
+      margin-bottom: 24px;
+    }
 
     /* Stats strip */
-    .stats-strip{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:12px;margin-bottom:24px;}
-    .stat-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:16px;text-align:center;}
-    .stat-num{font-family:'DM Serif Display',serif;font-size:28px;color:var(--accent);}
-    .stat-label{font-size:12px;color:var(--text-muted);margin-top:2px;}
+    .stats-strip {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+      gap: 12px;
+      margin-bottom: 24px;
+    }
+
+    .stat-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 16px;
+      text-align: center;
+    }
+
+    .stat-num {
+      font-family: 'DM Serif Display', serif;
+      font-size: 28px;
+      color: var(--accent);
+    }
+
+    .stat-label {
+      font-size: 12px;
+      color: var(--text-muted);
+      margin-top: 2px;
+    }
 
     /* Tabla usuarios */
-    .users-toolbar{display:flex;gap:10px;margin-bottom:14px;flex-wrap:wrap;}
-    .users-toolbar input{flex:1;min-width:180px;padding:8px 12px;border:1px solid var(--border);border-radius:var(--radius-sm);font-family:inherit;font-size:13px;outline:none;}
-    .users-toolbar input:focus{border-color:var(--accent);}
-    .table-wrap{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);overflow:hidden;}
-    table{width:100%;border-collapse:collapse;font-size:13px;}
-    thead{background:var(--surface2);}
-    th{padding:10px 14px;text-align:left;font-weight:600;font-size:12px;color:var(--text-muted);text-transform:uppercase;letter-spacing:.04em;white-space:nowrap;}
-    td{padding:11px 14px;border-top:1px solid var(--border);vertical-align:middle;}
-    tr:hover td{background:var(--surface2);}
-    .status-dot{display:inline-block;width:8px;height:8px;border-radius:50%;margin-right:6px;}
-    .dot-online{background:#22c55e;}
-    .dot-offline{background:#94a3b8;}
-    .dot-warn{background:var(--warn);}
-    .badge-pill{display:inline-block;border-radius:999px;padding:2px 9px;font-size:11px;font-weight:700;}
-    .badge-active{background:var(--success-soft);color:var(--success);}
-    .badge-blocked{background:var(--danger-soft);color:var(--danger);}
-    .badge-warn{background:var(--warn-soft);color:var(--warn);}
-    .multi-ip-row td{background:#fffbeb !important;}
-    .multi-ip-row:hover td{background:#fef3c7 !important;}
-    .empty-row td{text-align:center;color:var(--text-muted);padding:32px;font-size:14px;}
+    .users-toolbar {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 14px;
+      flex-wrap: wrap;
+    }
+
+    .users-toolbar input {
+      flex: 1;
+      min-width: 180px;
+      padding: 8px 12px;
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      font-family: inherit;
+      font-size: 13px;
+      outline: none;
+    }
+
+    .users-toolbar input:focus {
+      border-color: var(--accent);
+    }
+
+    .table-wrap {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      overflow: hidden;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 13px;
+    }
+
+    thead {
+      background: var(--surface2);
+    }
+
+    th {
+      padding: 10px 14px;
+      text-align: left;
+      font-weight: 600;
+      font-size: 12px;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: .04em;
+      white-space: nowrap;
+    }
+
+    td {
+      padding: 11px 14px;
+      border-top: 1px solid var(--border);
+      vertical-align: middle;
+    }
+
+    tr:hover td {
+      background: var(--surface2);
+    }
+
+    .status-dot {
+      display: inline-block;
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      margin-right: 6px;
+    }
+
+    .dot-online {
+      background: #22c55e;
+    }
+
+    .dot-offline {
+      background: #94a3b8;
+    }
+
+    .dot-warn {
+      background: var(--warn);
+    }
+
+    .badge-pill {
+      display: inline-block;
+      border-radius: 999px;
+      padding: 2px 9px;
+      font-size: 11px;
+      font-weight: 700;
+    }
+
+    .badge-active {
+      background: var(--success-soft);
+      color: var(--success);
+    }
+
+    .badge-blocked {
+      background: var(--danger-soft);
+      color: var(--danger);
+    }
+
+    .badge-warn {
+      background: var(--warn-soft);
+      color: var(--warn);
+    }
+
+    .multi-ip-row td {
+      background: #fffbeb !important;
+    }
+
+    .multi-ip-row:hover td {
+      background: #fef3c7 !important;
+    }
+
+    .empty-row td {
+      text-align: center;
+      color: var(--text-muted);
+      padding: 32px;
+      font-size: 14px;
+    }
 
     /* Historial */
-    .history-list{display:flex;flex-direction:column;gap:8px;}
-    .history-item{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:14px 16px;display:flex;align-items:flex-start;gap:14px;}
-    .history-icon{font-size:20px;flex-shrink:0;margin-top:2px;}
-    .history-info{flex:1;}
-    .history-user{font-weight:600;font-size:14px;}
-    .history-detail{font-size:12px;color:var(--text-muted);margin-top:2px;}
-    .history-time{font-size:12px;color:var(--text-light);white-space:nowrap;}
-    .history-warn{border-color:var(--warn);background:var(--warn-soft);}
+    .history-list {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .history-item {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 14px 16px;
+      display: flex;
+      align-items: flex-start;
+      gap: 14px;
+    }
+
+    .history-icon {
+      font-size: 20px;
+      flex-shrink: 0;
+      margin-top: 2px;
+    }
+
+    .history-info {
+      flex: 1;
+    }
+
+    .history-user {
+      font-weight: 600;
+      font-size: 14px;
+    }
+
+    .history-detail {
+      font-size: 12px;
+      color: var(--text-muted);
+      margin-top: 2px;
+    }
+
+    .history-time {
+      font-size: 12px;
+      color: var(--text-light);
+      white-space: nowrap;
+    }
+
+    .history-warn {
+      border-color: var(--warn);
+      background: var(--warn-soft);
+    }
 
     /* Gestión de códigos */
-    .codes-toolbar{display:flex;gap:10px;margin-bottom:14px;flex-wrap:wrap;align-items:center;}
-    .code-row{display:flex;align-items:center;gap:10px;padding:12px 14px;border-top:1px solid var(--border);font-size:13px;}
-    .code-row:first-child{border-top:none;}
-    .code-value{font-family:monospace;background:var(--surface2);border-radius:4px;padding:3px 8px;font-size:13px;font-weight:700;letter-spacing:.05em;color:var(--text);}
-    .code-name{flex:1;font-weight:500;}
-    .code-meta{font-size:12px;color:var(--text-muted);}
-    .empty-state{text-align:center;padding:48px 24px;color:var(--text-muted);}
-    .empty-state .es-icon{font-size:40px;margin-bottom:12px;}
-    .empty-state p{font-size:15px;}
+    .codes-toolbar {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 14px;
+      flex-wrap: wrap;
+      align-items: center;
+    }
+
+    .code-row {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 12px 14px;
+      border-top: 1px solid var(--border);
+      font-size: 13px;
+    }
+
+    .code-row:first-child {
+      border-top: none;
+    }
+
+    .code-value {
+      font-family: monospace;
+      background: var(--surface2);
+      border-radius: 4px;
+      padding: 3px 8px;
+      font-size: 13px;
+      font-weight: 700;
+      letter-spacing: .05em;
+      color: var(--text);
+    }
+
+    .code-name {
+      flex: 1;
+      font-weight: 500;
+    }
+
+    .code-meta {
+      font-size: 12px;
+      color: var(--text-muted);
+    }
+
+    .empty-state {
+      text-align: center;
+      padding: 48px 24px;
+      color: var(--text-muted);
+    }
+
+    .empty-state .es-icon {
+      font-size: 40px;
+      margin-bottom: 12px;
+    }
+
+    .empty-state p {
+      font-size: 15px;
+    }
 
     /* Progress individual */
-    .progress-mini-bar{width:80px;height:6px;background:var(--surface2);border-radius:99px;overflow:hidden;display:inline-block;vertical-align:middle;margin-right:6px;}
-    .progress-mini-fill{height:100%;background:var(--accent);border-radius:99px;}
+    .progress-mini-bar {
+      width: 80px;
+      height: 6px;
+      background: var(--surface2);
+      border-radius: 99px;
+      overflow: hidden;
+      display: inline-block;
+      vertical-align: middle;
+      margin-right: 6px;
+    }
+
+    .progress-mini-fill {
+      height: 100%;
+      background: var(--accent);
+      border-radius: 99px;
+    }
 
     /* Toast */
-    #toast-container{position:fixed;bottom:24px;right:24px;z-index:300;display:flex;flex-direction:column;gap:8px;}
-    .toast{background:var(--text);color:#fff;border-radius:var(--radius);padding:10px 18px;font-size:13px;font-weight:500;box-shadow:var(--shadow-lg);animation:slideInRight .25s ease;max-width:300px;}
-    @keyframes slideInRight{from{transform:translateX(20px);opacity:0;}to{transform:translateX(0);opacity:1;}}
-    .toast.success{background:var(--success);}
-    .toast.danger{background:var(--danger);}
-    .toast.warn{background:var(--warn);}
+    #toast-container {
+      position: fixed;
+      bottom: 24px;
+      right: 24px;
+      z-index: 300;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .toast {
+      background: var(--text);
+      color: #fff;
+      border-radius: var(--radius);
+      padding: 10px 18px;
+      font-size: 13px;
+      font-weight: 500;
+      box-shadow: var(--shadow-lg);
+      animation: slideInRight .25s ease;
+      max-width: 300px;
+    }
+
+    @keyframes slideInRight {
+      from {
+        transform: translateX(20px);
+        opacity: 0;
+      }
+
+      to {
+        transform: translateX(0);
+        opacity: 1;
+      }
+    }
+
+    .toast.success {
+      background: var(--success);
+    }
+
+    .toast.danger {
+      background: var(--danger);
+    }
+
+    .toast.warn {
+      background: var(--warn);
+    }
 
     /* Alerta multi-IP banner */
-    #alert-banner{display:none;background:#fffbeb;border:1px solid #fde68a;border-radius:var(--radius);padding:12px 18px;margin-bottom:20px;font-size:13px;color:#92400e;align-items:center;gap:10px;}
-    #alert-banner.visible{display:flex;}
-
-    @media(max-width:600px){
-      #main-layout{padding:20px 14px 60px;}
-      .modal{padding:20px;}
-      #admin-bar{gap:6px;padding:0 12px;}
-      #admin-bar button{padding:4px 9px;font-size:11px;}
-      .section-header{padding:12px 14px;}
-      .item-body{padding:0 10px 12px 38px;}
-      .modal-wide{max-width:100%;}
-      .stats-strip{grid-template-columns:1fr 1fr;}
-      th:nth-child(4),td:nth-child(4){display:none;}
+    #alert-banner {
+      display: none;
+      background: #fffbeb;
+      border: 1px solid #fde68a;
+      border-radius: var(--radius);
+      padding: 12px 18px;
+      margin-bottom: 20px;
+      font-size: 13px;
+      color: #92400e;
+      align-items: center;
+      gap: 10px;
     }
+
+    #alert-banner.visible {
+      display: flex;
+    }
+
+    @media(max-width:600px) {
+      #main-layout {
+        padding: 20px 14px 60px;
+      }
+
+      .modal {
+        padding: 20px;
+      }
+
+      #admin-bar {
+        gap: 6px;
+        padding: 0 12px;
+      }
+
+      #admin-bar button {
+        padding: 4px 9px;
+        font-size: 11px;
+      }
+
+      .section-header {
+        padding: 12px 14px;
+      }
+
+      .item-body {
+        padding: 0 10px 12px 38px;
+      }
+
+      .modal-wide {
+        max-width: 100%;
+      }
+
+      .stats-strip {
+        grid-template-columns: 1fr 1fr;
+      }
+
+      th:nth-child(4),
+      td:nth-child(4) {
+        display: none;
+      }
+    }
+    /* Ampliar el ancho máximo para mejor distribución */
+#main-layout {
+  max-width: 1024px;
+  margin: 0 auto;
+  padding: 36px 20px 80px;
+}
+
+/* Responsividad en tablas del panel de administración */
+.table-wrap {
+  width: 100%;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+/* Accesibilidad: Foco visible en checkboxes */
+.item-checkbox:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
   </style>
 </head>
+
 <body>
 
-<!-- LOADER -->
-<div id="loader">
-  <div class="spinner"></div>
-  <p id="loader-msg">Conectando…</p>
-  <div id="error-msg"></div>
-</div>
+  <!-- LOADER -->
+  <div id="loader">
+    <div class="spinner"></div>
+    <p id="loader-msg">Conectando…</p>
+    <div id="error-msg"></div>
+  </div>
 
-<!-- PANTALLA DE ACCESO -->
-<div id="access-screen">
-  <div class="access-box">
-    <div class="access-logo">
-      <div class="access-logo-icon">📚</div>
-      <div class="access-logo-text">Aula<span>Virtual</span></div>
-    </div>
-    <h2 class="access-title">Acceso al curso</h2>
-    <p class="access-subtitle">Introduce tu nombre y el código de acceso que te fue proporcionado.</p>
-    <div id="access-error" class="access-error"></div>
-    <div class="access-form-group">
-      <label>Tu nombre</label>
-      <input type="text" id="inp-access-name" placeholder="Ej: Juan García" autocomplete="name" />
-    </div>
-    <div class="access-form-group">
-      <label>Código de acceso</label>
-      <input type="text" id="inp-access-code" placeholder="Ej: JUAN2024" autocomplete="off" style="text-transform:uppercase;letter-spacing:.08em;" />
-    </div>
-    <button class="access-btn" id="btn-access-enter" onclick="intentarAcceso()">Entrar al curso →</button>
-    <p style="text-align:center;margin-top:20px;">
-      <button id="btn-toggle-admin" onclick="toggleAdminForm()" style="background:none;border:none;color:var(--text-light);font-size:12px;cursor:pointer;text-decoration:underline;">Acceso administrador</button>
-    </p>
-    <div id="admin-inline-form" style="display:none;margin-top:16px;border-top:1px solid #e2ddd7;padding-top:16px;">
+  <!-- PANTALLA DE ACCESO -->
+  <div id="access-screen">
+    <div class="access-box" role="dialog" aria-modal="true" aria-labelledby="access-title">
+      <div class="access-logo">
+        <div class="access-logo-icon">📚</div>
+        <div class="access-logo-text">Aula<span>Virtual</span></div>
+      </div>
+      <h2 class="access-title">Acceso al curso</h2>
+      <p class="access-subtitle">Introduce tu nombre y el código de acceso que te fue proporcionado.</p>
+      <div id="access-error" class="access-error"></div>
       <div class="access-form-group">
-        <label>Email de administrador</label>
-        <input type="email" id="inp-admin-email" placeholder="admin@email.com" />
+        <label>Tu nombre</label>
+        <input type="text" id="inp-access-name" placeholder="Ej: Juan García" autocomplete="name" />
       </div>
       <div class="access-form-group">
-        <label>Contraseña</label>
-        <input type="password" id="inp-admin-pass" placeholder="Contraseña" />
+        <label>Código de acceso</label>
+        <input type="text" id="inp-access-code" placeholder="Ej: JUAN2024" autocomplete="off"
+          style="text-transform:uppercase;letter-spacing:.08em;" />
       </div>
-      <div id="admin-login-error" style="display:none;background:#fee2e2;color:#991b1b;border-radius:6px;padding:8px 12px;font-size:13px;margin-bottom:10px;"></div>
-      <button class="access-btn" id="btn-admin-login-inline" onclick="loginAdminInline()" style="background:#1a1916;margin-top:0;">Entrar como administrador</button>
-    </div>
-  </div>
-</div>
-
-<!-- APP -->
-<div id="app" style="display:none;">
-
-  <!-- ADMIN BAR -->
-  <div id="admin-bar">
-    <span class="ab-badge">✏️ Admin</span>
-    <span id="ab-course-name" style="opacity:.7;font-size:13px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:200px;"></span>
-    <span style="font-size:12px;opacity:.55;"><span class="sync-dot"></span>En tiempo real</span>
-    <span class="ab-spacer"></span>
-    <button onclick="mostrarPanelUsuarios()">👥 Usuarios</button>
-    <button onclick="exportCourse()">⬇ Exportar</button>
-    <button onclick="importCoursePrompt()">⬆ Importar</button>
-    <button class="btn-danger-admin" onclick="logoutAdmin()">Cerrar sesión</button>
-  </div>
-
-  <!-- HEADER -->
-  <header id="site-header">
-    <div id="logo-area">
-      <div id="logo-icon" title="Triple clic: admin">📚</div>
-      <div id="logo-text">Aula<span>Virtual</span></div>
-    </div>
-    <div id="header-right">
-      <span id="user-chip"></span>
-      <span class="progress-badge" id="header-progress">0% completado</span>
-      <button class="btn btn-secondary btn-sm" id="btn-reset-progress" onclick="resetProgreso()" style="display:none;" title="Reiniciar progreso">↩ Reiniciar</button>
-      <button class="btn btn-secondary btn-sm" id="btn-logout-user" onclick="logoutUser()" style="display:none;" title="Cerrar sesión de visitante">⬡ Salir</button>
-    </div>
-  </header>
-
-  <!-- CONTENIDO CURSO -->
-  <main id="main-layout">
-    <section id="course-hero">
-      <div id="course-title-wrap">
-        <h1 id="course-title">Cargando…</h1>
-        <button class="edit-inline-btn" onclick="editCourseInfo()">✏️ Editar</button>
-      </div>
-      <p id="course-desc"></p>
-    </section>
-    <div id="progress-wrap">
-      <span id="progress-label">Tu progreso</span>
-      <div id="progress-bar-outer"><div id="progress-bar-inner"></div></div>
-      <span id="progress-pct">0%</span>
-    </div>
-    <div id="sections-list"></div>
-    <button id="btn-add-section" onclick="openAddSectionModal()">＋ Añadir sección</button>
-  </main>
-
-  <!-- PANEL ADMIN USUARIOS -->
-  <div id="panel-usuarios">
-    <button class="btn btn-secondary btn-sm" onclick="ocultarPanelUsuarios()" style="margin-bottom:20px;">← Volver al curso</button>
-
-    <div id="alert-banner">
-      ⚠️ <span id="alert-banner-text"></span>
-    </div>
-
-    <div class="panel-tabs">
-      <button class="panel-tab active" onclick="cambiarTab('tab-activos')">🟢 Activos ahora</button>
-      <button class="panel-tab" onclick="cambiarTab('tab-historial')">📋 Historial</button>
-      <button class="panel-tab" onclick="cambiarTab('tab-codigos')">🔑 Códigos</button>
-      <button class="panel-tab" onclick="cambiarTab('tab-progreso')">📊 Progreso</button>
-    </div>
-
-    <!-- TAB: ACTIVOS -->
-    <div id="tab-activos" class="panel-section visible">
-      <h2 class="panel-title">Usuarios activos</h2>
-      <p class="panel-subtitle">Conexiones de los últimos 10 minutos.</p>
-      <div class="stats-strip" id="stats-strip"></div>
-      <div class="table-wrap">
-        <table>
-          <thead><tr>
-            <th>Usuario</th><th>Código</th><th>Última actividad</th><th>IP</th><th>Estado</th><th>Acciones</th>
-          </tr></thead>
-          <tbody id="tbody-activos"></tbody>
-        </table>
-      </div>
-    </div>
-
-    <!-- TAB: HISTORIAL -->
-    <div id="tab-historial" class="panel-section">
-      <h2 class="panel-title">Historial de accesos</h2>
-      <p class="panel-subtitle">Últimos 200 eventos registrados.</p>
-      <div id="historial-list" class="history-list"></div>
-    </div>
-
-    <!-- TAB: CÓDIGOS -->
-    <div id="tab-codigos" class="panel-section">
-      <h2 class="panel-title">Gestión de códigos</h2>
-      <p class="panel-subtitle">Crea, edita o bloquea códigos de acceso individuales.</p>
-      <div class="codes-toolbar">
-        <button class="btn btn-primary" onclick="openAddCodeModal()">＋ Nuevo código</button>
-      </div>
-      <div class="table-wrap">
-        <div id="codigos-list"></div>
-      </div>
-    </div>
-
-    <!-- TAB: PROGRESO -->
-    <div id="tab-progreso" class="panel-section">
-      <h2 class="panel-title">Progreso individual</h2>
-      <p class="panel-subtitle">Avance de cada alumno en el curso.</p>
-      <div class="table-wrap">
-        <table>
-          <thead><tr>
-            <th>Alumno</th><th>Código</th><th>Progreso</th><th>Completados</th><th>Último acceso</th>
-          </tr></thead>
-          <tbody id="tbody-progreso"></tbody>
-        </table>
+      <button class="access-btn" id="btn-access-enter" onclick="intentarAcceso()">Entrar al curso →</button>
+      <p style="text-align:center;margin-top:20px;">
+        <button id="btn-toggle-admin" onclick="toggleAdminForm()"
+          style="background:none;border:none;color:var(--text-light);font-size:12px;cursor:pointer;text-decoration:underline;">Acceso
+          administrador</button>
+      </p>
+      <div id="admin-inline-form" style="display:none;margin-top:16px;border-top:1px solid #e2ddd7;padding-top:16px;">
+        <div class="access-form-group">
+          <label>Email de administrador</label>
+          <input type="email" id="inp-admin-email" placeholder="admin@email.com" />
+        </div>
+        <div class="access-form-group">
+          <label>Contraseña</label>
+          <input type="password" id="inp-admin-pass" placeholder="Contraseña" />
+        </div>
+        <div id="admin-login-error"
+          style="display:none;background:#fee2e2;color:#991b1b;border-radius:6px;padding:8px 12px;font-size:13px;margin-bottom:10px;">
+        </div>
+        <button class="access-btn" id="btn-admin-login-inline" onclick="loginAdminInline()"
+          style="background:#1a1916;margin-top:0;">Entrar como administrador</button>
       </div>
     </div>
   </div>
 
-</div><!-- /#app -->
+  <!-- APP -->
+  <div id="app" style="display:none;">
 
-<div id="toast-container"></div>
+    <!-- ADMIN BAR -->
+    <div id="admin-bar">
+      <span class="ab-badge">✏️ Admin</span>
+      <span id="ab-course-name"
+        style="opacity:.7;font-size:13px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:200px;"></span>
+      <span style="font-size:12px;opacity:.55;"><span class="sync-dot"></span>En tiempo real</span>
+      <span class="ab-spacer"></span>
+      <button onclick="mostrarPanelUsuarios()">👥 Usuarios</button>
+      <button onclick="exportCourse()">⬇ Exportar</button>
+      <button onclick="importCoursePrompt()">⬆ Importar</button>
+      <button class="btn-danger-admin" onclick="logoutAdmin()">Cerrar sesión</button>
+    </div>
 
-<script type="module">
-/* ================================================================
-   CONFIGURACIÓN FIREBASE
-================================================================ */
-const firebaseConfig = {
-  apiKey: "AIzaSyA3XxXT8TWuPGdi8mshzCDSUq1fNciljSY",
-  authDomain: "aula-60de5.firebaseapp.com",
-  projectId: "aula-60de5",
-  storageBucket: "aula-60de5.firebasestorage.app",
-  messagingSenderId: "470371714489",
-  appId: "1:470371714489:web:2c428886849eeeb541e268",
-  measurementId: "G-QFTEPV5M3R"
-};
+    <!-- HEADER -->
+    <header id="site-header">
+      <div id="logo-area">
+        <div id="logo-icon" title="Triple clic: admin">📚</div>
+        <div id="logo-text">Aula<span>Virtual</span></div>
+      </div>
+      <div id="header-right">
+        <span id="user-chip"></span>
+        <span class="progress-badge" id="header-progress">0% completado</span>
+        <button class="btn btn-secondary btn-sm" id="btn-reset-progress" onclick="resetProgreso()" style="display:none;"
+          title="Reiniciar progreso">↩ Reiniciar</button>
+        <button class="btn btn-secondary btn-sm" id="btn-logout-user" onclick="logoutUser()" style="display:none;"
+          title="Cerrar sesión de visitante">⬡ Salir</button>
+      </div>
+    </header>
 
-/* ================================================================
-   CURSO INICIAL
-================================================================ */
-const CURSO_INICIAL = {
-  titulo: 'Introducción al Diseño UX/UI',
-  descripcion: 'Aprende los fundamentos del diseño de experiencia de usuario y crea interfaces atractivas y funcionales.',
-  secciones: [
-    {
-      id: 's1', titulo: '1. Fundamentos del UX', colapsada: false,
-      elementos: [
-        { id: 'e1', tipo: 'video', titulo: '¿Qué es el UX Design?', descripcion: 'Exploraremos los conceptos básicos del diseño de experiencia de usuario.', videoUrl: 'https://www.youtube.com/watch?v=ziQEqGZB8GE', enlaces: [] },
-        { id: 'e2', tipo: 'texto', titulo: 'Lectura: Los 10 principios de Nielsen', descripcion: 'Lee el artículo sobre las heurísticas de usabilidad de Jakob Nielsen.', enlaces: [] }
+    <!-- CONTENIDO CURSO -->
+    <main id="main-layout">
+      <section id="course-hero">
+        <div id="course-title-wrap">
+          <h1 id="course-title">Cargando…</h1>
+          <button class="edit-inline-btn" onclick="editCourseInfo()">✏️ Editar</button>
+        </div>
+        <p id="course-desc"></p>
+      </section>
+      <div id="progress-wrap">
+        <span id="progress-label">Tu progreso</span>
+        <div id="progress-bar-outer">
+          <div id="progress-bar-inner"></div>
+        </div>
+        <span id="progress-pct">0%</span>
+      </div>
+      <div id="sections-list"></div>
+      <button id="btn-add-section" onclick="openAddSectionModal()">＋ Añadir sección</button>
+    </main>
+
+    <!-- PANEL ADMIN USUARIOS -->
+    <div id="panel-usuarios">
+      <button class="btn btn-secondary btn-sm" onclick="ocultarPanelUsuarios()" style="margin-bottom:20px;">← Volver al
+        curso</button>
+
+      <div id="alert-banner">
+        ⚠️ <span id="alert-banner-text"></span>
+      </div>
+
+      <div class="panel-tabs">
+        <button class="panel-tab active" onclick="cambiarTab('tab-activos')">🟢 Activos ahora</button>
+        <button class="panel-tab" onclick="cambiarTab('tab-historial')">📋 Historial</button>
+        <button class="panel-tab" onclick="cambiarTab('tab-codigos')">🔑 Códigos</button>
+        <button class="panel-tab" onclick="cambiarTab('tab-progreso')">📊 Progreso</button>
+      </div>
+
+      <!-- TAB: ACTIVOS -->
+      <div id="tab-activos" class="panel-section visible">
+        <h2 class="panel-title">Usuarios activos</h2>
+        <p class="panel-subtitle">Conexiones de los últimos 10 minutos.</p>
+        <div class="stats-strip" id="stats-strip"></div>
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>Usuario</th>
+                <th>Código</th>
+                <th>Última actividad</th>
+                <th>IP</th>
+                <th>Estado</th>
+                <th>Acciones</th>
+              </tr>
+            </thead>
+            <tbody id="tbody-activos"></tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- TAB: HISTORIAL -->
+      <div id="tab-historial" class="panel-section">
+        <h2 class="panel-title">Historial de accesos</h2>
+        <p class="panel-subtitle">Últimos 200 eventos registrados.</p>
+        <div id="historial-list" class="history-list"></div>
+      </div>
+
+      <!-- TAB: CÓDIGOS -->
+      <div id="tab-codigos" class="panel-section">
+        <h2 class="panel-title">Gestión de códigos</h2>
+        <p class="panel-subtitle">Crea, edita o bloquea códigos de acceso individuales.</p>
+        <div class="codes-toolbar">
+          <button class="btn btn-primary" onclick="openAddCodeModal()">＋ Nuevo código</button>
+        </div>
+        <div class="table-wrap">
+          <div id="codigos-list"></div>
+        </div>
+      </div>
+
+      <!-- TAB: PROGRESO -->
+      <div id="tab-progreso" class="panel-section">
+        <h2 class="panel-title">Progreso individual</h2>
+        <p class="panel-subtitle">Avance de cada alumno en el curso.</p>
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>Alumno</th>
+                <th>Código</th>
+                <th>Progreso</th>
+                <th>Completados</th>
+                <th>Último acceso</th>
+              </tr>
+            </thead>
+            <tbody id="tbody-progreso"></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+  </div><!-- /#app -->
+
+  <div id="toast-container"></div>
+
+  <script type="module">
+    /* ================================================================
+       CONFIGURACIÓN FIREBASE
+    ================================================================ */
+    const firebaseConfig = {
+      apiKey: "AIzaSyA3XxXT8TWuPGdi8mshzCDSUq1fNciljSY",
+      authDomain: "aula-60de5.firebaseapp.com",
+      projectId: "aula-60de5",
+      storageBucket: "aula-60de5.firebasestorage.app",
+      messagingSenderId: "470371714489",
+      appId: "1:470371714489:web:2c428886849eeeb541e268",
+      measurementId: "G-QFTEPV5M3R"
+    };
+
+    /* ================================================================
+       CURSO INICIAL
+    ================================================================ */
+    const CURSO_INICIAL = {
+      titulo: 'Introducción al Diseño UX/UI',
+      descripcion: 'Aprende los fundamentos del diseño de experiencia de usuario y crea interfaces atractivas y funcionales.',
+      secciones: [
+        {
+          id: 's1', titulo: '1. Fundamentos del UX', colapsada: false,
+          elementos: [
+            { id: 'e1', tipo: 'video', titulo: '¿Qué es el UX Design?', descripcion: 'Exploraremos los conceptos básicos del diseño de experiencia de usuario.', videoUrl: 'https://www.youtube.com/watch?v=ziQEqGZB8GE', enlaces: [] },
+            { id: 'e2', tipo: 'texto', titulo: 'Lectura: Los 10 principios de Nielsen', descripcion: 'Lee el artículo sobre las heurísticas de usabilidad de Jakob Nielsen.', enlaces: [] }
+          ]
+        },
+        {
+          id: 's2', titulo: '2. Herramientas y Proceso', colapsada: false,
+          elementos: [
+            { id: 'e3', tipo: 'video', titulo: 'Introducción a Figma', descripcion: 'Tutorial de Figma, herramienta estándar de diseño UI.', videoUrl: 'https://www.youtube.com/watch?v=FTFaQWZBqQ8', enlaces: [] },
+            { id: 'e4', tipo: 'texto', titulo: 'Recursos descargables del módulo', descripcion: 'Accede a la plantilla de wireframes y el checklist de usabilidad.', enlaces: [{ nombre: 'Plantilla de wireframes (Figma)', url: 'https://www.figma.com/community/file/809845932222680533' }, { nombre: 'Checklist de usabilidad', url: 'https://www.nngroup.com/articles/ten-usability-heuristics/' }] }
+          ]
+        }
       ]
-    },
-    {
-      id: 's2', titulo: '2. Herramientas y Proceso', colapsada: false,
-      elementos: [
-        { id: 'e3', tipo: 'video', titulo: 'Introducción a Figma', descripcion: 'Tutorial de Figma, herramienta estándar de diseño UI.', videoUrl: 'https://www.youtube.com/watch?v=FTFaQWZBqQ8', enlaces: [] },
-        { id: 'e4', tipo: 'texto', titulo: 'Recursos descargables del módulo', descripcion: 'Accede a la plantilla de wireframes y el checklist de usabilidad.', enlaces: [{ nombre: 'Plantilla de wireframes (Figma)', url: 'https://www.figma.com/community/file/809845932222680533' }, { nombre: 'Checklist de usabilidad', url: 'https://www.nngroup.com/articles/ten-usability-heuristics/' }] }
-      ]
-    }
-  ]
-};
+    };
 
-/* ================================================================
-   IMPORTS
-================================================================ */
-import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js';
-import { getFirestore, doc, getDoc, setDoc, onSnapshot, collection, addDoc, getDocs, updateDoc, query, orderBy, limit, serverTimestamp, Timestamp } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js';
-import { getAuth, signInWithEmailAndPassword, onAuthStateChanged, signOut } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js';
+    /* ================================================================
+       IMPORTS
+    ================================================================ */
+    import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js';
+    import { getFirestore, doc, getDoc, setDoc, onSnapshot, collection, addDoc, getDocs, updateDoc, query, orderBy, limit, serverTimestamp, Timestamp } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js';
+    import { getAuth, signInWithEmailAndPassword, onAuthStateChanged, signOut } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js';
 
-/* ================================================================
-   ESTADO GLOBAL
-================================================================ */
-let db, auth;
-let curso = null;
-let adminMode = false;
+    /* ================================================================
+       ESTADO GLOBAL
+    ================================================================ */
+    let db, auth;
+    let curso = null;
+    let adminMode = false;
 
-// Sesión visitante
-let sesionActual = null; // { nombre, codigo, codigoId, sessionId, ip }
-const KEY_SESION = 'aulav_sesion_v2';
+    // Sesión visitante
+    let sesionActual = null; // { nombre, codigo, codigoId, sessionId, ip }
+    const KEY_SESION = 'aulav_sesion_v2';
 
-// Progreso: se guarda por código en Firestore + local backup
-let progreso = {};
-const KEY_PROGRESO = 'aulav_progreso';
+    // Progreso: se guarda por código en Firestore + local backup
+    let progreso = {};
+    const KEY_PROGRESO = 'aulav_progreso';
 
-// Drag & drop
-let dragSrcSeccion = null, dragSrcElement = null, dragSrcSectionId = null;
-let modalEnlaces = [], modalEditSecId = null, modalEditElId = null;
-let logoClickCount = 0, logoClickTimer = null;
+    // Drag & drop
+    let dragSrcSeccion = null, dragSrcElement = null, dragSrcSectionId = null;
+    let modalEnlaces = [], modalEditSecId = null, modalEditElId = null;
+    let logoClickCount = 0, logoClickTimer = null;
 
-// Panel datos
-let codigosData = [];
-let sesionesData = [];
-let historialData = [];
-let progresoUsuarios = {};
-let panelIntervals = [];
+    // Panel datos
+    let codigosData = [];
+    let sesionesData = [];
+    let historialData = [];
+    let progresoUsuarios = {};
+    let panelIntervals = [];
 
-/* ================================================================
-   INIT
-================================================================ */
-async function init() {
-  setLoaderMsg('Conectando con Firebase…');
-  try {
-    const app = initializeApp(firebaseConfig);
-    db = getFirestore(app);
-    auth = getAuth(app);
+    /* ================================================================
+       INIT
+    ================================================================ */
+    async function init() {
+      setLoaderMsg('Conectando con Firebase…');
+      try {
+        const app = initializeApp(firebaseConfig);
+        db = getFirestore(app);
+        auth = getAuth(app);
 
-    // Auth state
-    onAuthStateChanged(auth, async (user) => {
-      adminMode = !!user;
-      if (adminMode) {
-        // Admin entra directo sin pantalla de acceso
-        await cargarCurso();
-        ocultarLoader();
-        mostrarApp();
-        renderizarCurso();
+        // Auth state
+        onAuthStateChanged(auth, async (user) => {
+          adminMode = !!user;
+          if (adminMode) {
+            // Admin entra directo sin pantalla de acceso
+            await cargarCurso();
+            ocultarLoader();
+            mostrarApp();
+            renderizarCurso();
+          }
+        });
+
+        // Verificar sesión visitante guardada
+        const sesGuardada = leerSesionGuardada();
+        if (sesGuardada) {
+          const valida = await verificarSesionGuardada(sesGuardada);
+          if (valida) {
+            sesionActual = sesGuardada;
+            await cargarProgreso();
+            await cargarCurso();
+            ocultarLoader();
+            mostrarApp();
+            renderizarCurso();
+            actualizarPresencia();
+            iniciarHeartbeat();
+            return;
+          }
+        }
+
+        // Si no hay sesión ni admin, mostrar pantalla de acceso
+        if (!adminMode) {
+          ocultarLoader();
+          mostrarPantallaAcceso();
+        }
+
+      } catch (err) {
+        mostrarError('No se pudo conectar con Firebase.<br>' + err.message);
       }
-    });
+    }
 
-    // Verificar sesión visitante guardada
-    const sesGuardada = leerSesionGuardada();
-    if (sesGuardada) {
-      const valida = await verificarSesionGuardada(sesGuardada);
-      if (valida) {
-        sesionActual = sesGuardada;
+    async function cargarCurso() {
+      const ref = doc(db, 'cursos', 'principal');
+      const snap = await getDoc(ref);
+      if (!snap.exists()) {
+        await setDoc(ref, { data: JSON.stringify(CURSO_INICIAL) });
+        curso = CURSO_INICIAL;
+      } else {
+        curso = JSON.parse(snap.data().data);
+      }
+      // Suscripción tiempo real
+      onSnapshot(ref, (docSnap) => {
+        if (!docSnap.exists()) return;
+        curso = JSON.parse(docSnap.data().data);
+        renderizarCurso();
+        actualizarProgreso();
+      });
+    }
+
+    /* ================================================================
+       PANTALLA DE ACCESO
+    ================================================================ */
+    function mostrarPantallaAcceso() {
+      document.getElementById('access-screen').classList.add('visible');
+      setTimeout(() => document.getElementById('inp-access-name')?.focus(), 100);
+      document.getElementById('inp-access-code').addEventListener('keydown', e => { if (e.key === 'Enter') intentarAcceso(); });
+      document.getElementById('inp-access-name').addEventListener('keydown', e => { if (e.key === 'Enter') document.getElementById('inp-access-code').focus(); });
+    }
+
+    function ocultarPantallaAcceso() {
+      document.getElementById('access-screen').classList.remove('visible');
+    }
+
+    async function intentarAcceso() {
+      const nombre = document.getElementById('inp-access-name').value.trim();
+      const codigoInput = document.getElementById('inp-access-code').value.trim().toUpperCase();
+      const errEl = document.getElementById('access-error');
+      const btn = document.getElementById('btn-access-enter');
+
+      errEl.style.display = 'none';
+      if (!nombre) { mostrarAccessError('Escribe tu nombre.'); return; }
+      if (!codigoInput) { mostrarAccessError('Escribe tu código de acceso.'); return; }
+
+      btn.disabled = true;
+      btn.textContent = 'Verificando…';
+
+      try {
+        // Buscar código en Firestore
+        const codsSnap = await getDocs(collection(db, 'codigos'));
+        let codigoDoc = null;
+        codsSnap.forEach(d => {
+          const data = d.data();
+          if (data.codigo === codigoInput) codigoDoc = { id: d.id, ...data };
+        });
+
+        if (!codigoDoc) {
+          mostrarAccessError('Código de acceso incorrecto.');
+          btn.disabled = false; btn.textContent = 'Entrar al curso →';
+          return;
+        }
+        if (codigoDoc.bloqueado) {
+          mostrarAccessError('Este código ha sido suspendido. Contacta con el administrador.');
+          btn.disabled = false; btn.textContent = 'Entrar al curso →';
+          return;
+        }
+
+        // Obtener IP
+        const ip = await obtenerIP();
+        const sessionId = generarId('ses');
+
+        sesionActual = { nombre, codigo: codigoInput, codigoId: codigoDoc.id, sessionId, ip };
+        guardarSesionLocal(sesionActual);
+
+        // Registrar acceso en historial
+        await registrarAcceso(sesionActual, ip, 'login');
+
+        // Actualizar presencia
+        await actualizarPresencia();
+
+        // Cargar progreso
         await cargarProgreso();
         await cargarCurso();
-        ocultarLoader();
+
+        ocultarPantallaAcceso();
         mostrarApp();
         renderizarCurso();
-        actualizarPresencia();
         iniciarHeartbeat();
-        return;
+
+        mostrarToast('¡Bienvenido/a, ' + nombre + '!', 'success');
+
+      } catch (err) {
+        mostrarAccessError('Error al conectar. Intenta de nuevo.');
+        console.error(err);
+        btn.disabled = false; btn.textContent = 'Entrar al curso →';
       }
     }
 
-    // Si no hay sesión ni admin, mostrar pantalla de acceso
-    if (!adminMode) {
-      ocultarLoader();
+    function mostrarAccessError(msg) {
+      const el = document.getElementById('access-error');
+      el.textContent = msg;
+      el.style.display = 'block';
+    }
+
+    /* ================================================================
+       PRESENCIA / HEARTBEAT
+    ================================================================ */
+    async function actualizarPresencia() {
+      if (!sesionActual || !db) return;
+      try {
+        const ref = doc(db, 'sesiones', sesionActual.sessionId);
+        await setDoc(ref, {
+          nombre: sesionActual.nombre,
+          codigo: sesionActual.codigo,
+          codigoId: sesionActual.codigoId,
+          ip: sesionActual.ip,
+          ultimaActividad: serverTimestamp(),
+          activo: true
+        }, { merge: true });
+      } catch (_) { }
+    }
+
+    function iniciarHeartbeat() {
+      // Ping cada 3 minutos
+      setInterval(actualizarPresencia, 3 * 60 * 1000);
+      // Marcar inactivo al salir
+      window.addEventListener('beforeunload', () => {
+        if (sesionActual && db) {
+          const ref = doc(db, 'sesiones', sesionActual.sessionId);
+          setDoc(ref, { activo: false, ultimaActividad: serverTimestamp() }, { merge: true }).catch(() => { });
+        }
+      });
+    }
+
+    async function registrarAcceso(ses, ip, tipo = 'actividad') {
+      try {
+        await addDoc(collection(db, 'historial'), {
+          nombre: ses.nombre,
+          codigo: ses.codigo,
+          codigoId: ses.codigoId,
+          ip,
+          tipo,
+          ts: serverTimestamp()
+        });
+      } catch (_) { }
+    }
+
+    /* ================================================================
+       PROGRESO EN FIRESTORE (por código)
+    ================================================================ */
+    async function cargarProgreso() {
+      // Backup local
+      try { progreso = JSON.parse(localStorage.getItem(KEY_PROGRESO + '_' + (sesionActual?.codigo || ''))) || {}; } catch { progreso = {}; }
+
+      if (sesionActual && db) {
+        try {
+          const ref = doc(db, 'progreso', sesionActual.codigoId);
+          const snap = await getDoc(ref);
+          if (snap.exists()) progreso = snap.data().items || {};
+        } catch (_) { }
+      }
+    }
+
+    async function guardarProgreso() {
+      if (sesionActual) {
+        localStorage.setItem(KEY_PROGRESO + '_' + sesionActual.codigo, JSON.stringify(progreso));
+        try {
+          const ref = doc(db, 'progreso', sesionActual.codigoId);
+          await setDoc(ref, { items: progreso, nombre: sesionActual.nombre, codigo: sesionActual.codigo, ultimaActividad: serverTimestamp() }, { merge: true });
+        } catch (_) { }
+        await actualizarPresencia();
+      } else {
+        localStorage.setItem(KEY_PROGRESO, JSON.stringify(progreso));
+      }
+    }
+
+    /* ================================================================
+       SESIÓN LOCAL
+    ================================================================ */
+    function guardarSesionLocal(ses) {
+      localStorage.setItem(KEY_SESION, JSON.stringify(ses));
+    }
+
+    function leerSesionGuardada() {
+      try { return JSON.parse(localStorage.getItem(KEY_SESION)); } catch { return null; }
+    }
+
+    async function verificarSesionGuardada(ses) {
+      try {
+        const codsSnap = await getDocs(collection(db, 'codigos'));
+        let valido = false;
+        codsSnap.forEach(d => {
+          if (d.id === ses.codigoId && !d.data().bloqueado) valido = true;
+        });
+        return valido;
+      } catch { return false; }
+    }
+
+    function logoutUser() {
+      if (!confirm('¿Cerrar sesión?')) return;
+      if (sesionActual && db) {
+        const ref = doc(db, 'sesiones', sesionActual.sessionId);
+        setDoc(ref, { activo: false }, { merge: true }).catch(() => { });
+      }
+      localStorage.removeItem(KEY_SESION);
+      sesionActual = null;
+      progreso = {};
+      document.getElementById('app').style.display = 'none';
       mostrarPantallaAcceso();
     }
 
-  } catch (err) {
-    mostrarError('No se pudo conectar con Firebase.<br>' + err.message);
-  }
-}
-
-async function cargarCurso() {
-  const ref = doc(db, 'cursos', 'principal');
-  const snap = await getDoc(ref);
-  if (!snap.exists()) {
-    await setDoc(ref, { data: JSON.stringify(CURSO_INICIAL) });
-    curso = CURSO_INICIAL;
-  } else {
-    curso = JSON.parse(snap.data().data);
-  }
-  // Suscripción tiempo real
-  onSnapshot(ref, (docSnap) => {
-    if (!docSnap.exists()) return;
-    curso = JSON.parse(docSnap.data().data);
-    renderizarCurso();
-    actualizarProgreso();
-  });
-}
-
-/* ================================================================
-   PANTALLA DE ACCESO
-================================================================ */
-function mostrarPantallaAcceso() {
-  document.getElementById('access-screen').classList.add('visible');
-  setTimeout(() => document.getElementById('inp-access-name')?.focus(), 100);
-  document.getElementById('inp-access-code').addEventListener('keydown', e => { if (e.key === 'Enter') intentarAcceso(); });
-  document.getElementById('inp-access-name').addEventListener('keydown', e => { if (e.key === 'Enter') document.getElementById('inp-access-code').focus(); });
-}
-
-function ocultarPantallaAcceso() {
-  document.getElementById('access-screen').classList.remove('visible');
-}
-
-async function intentarAcceso() {
-  const nombre = document.getElementById('inp-access-name').value.trim();
-  const codigoInput = document.getElementById('inp-access-code').value.trim().toUpperCase();
-  const errEl = document.getElementById('access-error');
-  const btn = document.getElementById('btn-access-enter');
-
-  errEl.style.display = 'none';
-  if (!nombre) { mostrarAccessError('Escribe tu nombre.'); return; }
-  if (!codigoInput) { mostrarAccessError('Escribe tu código de acceso.'); return; }
-
-  btn.disabled = true;
-  btn.textContent = 'Verificando…';
-
-  try {
-    // Buscar código en Firestore
-    const codsSnap = await getDocs(collection(db, 'codigos'));
-    let codigoDoc = null;
-    codsSnap.forEach(d => {
-      const data = d.data();
-      if (data.codigo === codigoInput) codigoDoc = { id: d.id, ...data };
-    });
-
-    if (!codigoDoc) {
-      mostrarAccessError('Código de acceso incorrecto.');
-      btn.disabled = false; btn.textContent = 'Entrar al curso →';
-      return;
-    }
-    if (codigoDoc.bloqueado) {
-      mostrarAccessError('Este código ha sido suspendido. Contacta con el administrador.');
-      btn.disabled = false; btn.textContent = 'Entrar al curso →';
-      return;
+    /* ================================================================
+       IP HELPER
+    ================================================================ */
+    async function obtenerIP() {
+      try {
+        const r = await fetch('https://api.ipify.org?format=json');
+        const d = await r.json();
+        return d.ip || 'desconocida';
+      } catch { return 'desconocida'; }
     }
 
-    // Obtener IP
-    const ip = await obtenerIP();
-    const sessionId = generarId('ses');
-
-    sesionActual = { nombre, codigo: codigoInput, codigoId: codigoDoc.id, sessionId, ip };
-    guardarSesionLocal(sesionActual);
-
-    // Registrar acceso en historial
-    await registrarAcceso(sesionActual, ip, 'login');
-
-    // Actualizar presencia
-    await actualizarPresencia();
-
-    // Cargar progreso
-    await cargarProgreso();
-    await cargarCurso();
-
-    ocultarPantallaAcceso();
-    mostrarApp();
-    renderizarCurso();
-    iniciarHeartbeat();
-
-    mostrarToast('¡Bienvenido/a, ' + nombre + '!', 'success');
-
-  } catch (err) {
-    mostrarAccessError('Error al conectar. Intenta de nuevo.');
-    console.error(err);
-    btn.disabled = false; btn.textContent = 'Entrar al curso →';
-  }
-}
-
-function mostrarAccessError(msg) {
-  const el = document.getElementById('access-error');
-  el.textContent = msg;
-  el.style.display = 'block';
-}
-
-/* ================================================================
-   PRESENCIA / HEARTBEAT
-================================================================ */
-async function actualizarPresencia() {
-  if (!sesionActual || !db) return;
-  try {
-    const ref = doc(db, 'sesiones', sesionActual.sessionId);
-    await setDoc(ref, {
-      nombre: sesionActual.nombre,
-      codigo: sesionActual.codigo,
-      codigoId: sesionActual.codigoId,
-      ip: sesionActual.ip,
-      ultimaActividad: serverTimestamp(),
-      activo: true
-    }, { merge: true });
-  } catch (_) {}
-}
-
-function iniciarHeartbeat() {
-  // Ping cada 3 minutos
-  setInterval(actualizarPresencia, 3 * 60 * 1000);
-  // Marcar inactivo al salir
-  window.addEventListener('beforeunload', () => {
-    if (sesionActual && db) {
-      const ref = doc(db, 'sesiones', sesionActual.sessionId);
-      setDoc(ref, { activo: false, ultimaActividad: serverTimestamp() }, { merge: true }).catch(() => {});
+    /* ================================================================
+       MOSTRAR APP
+    ================================================================ */
+    function mostrarApp() {
+      document.getElementById('app').style.display = 'block';
+      const chip = document.getElementById('user-chip');
+      const btnLogout = document.getElementById('btn-logout-user');
+      if (sesionActual && !adminMode) {
+        chip.textContent = '👤 ' + sesionActual.nombre;
+        chip.style.display = 'inline-block';
+        btnLogout.style.display = 'inline-flex';
+      } else {
+        chip.style.display = 'none';
+        btnLogout.style.display = 'none';
+      }
     }
-  });
-}
 
-async function registrarAcceso(ses, ip, tipo = 'actividad') {
-  try {
-    await addDoc(collection(db, 'historial'), {
-      nombre: ses.nombre,
-      codigo: ses.codigo,
-      codigoId: ses.codigoId,
-      ip,
-      tipo,
-      ts: serverTimestamp()
-    });
-  } catch (_) {}
-}
+    /* ================================================================
+       GUARDAR CURSO
+    ================================================================ */
+    async function guardarCurso() {
+      if (!db) return;
+      try {
+        const ref = doc(db, 'cursos', 'principal');
+        await setDoc(ref, { data: JSON.stringify(curso) });
+      } catch (err) {
+        mostrarToast('Error al guardar: ' + err.message, 'danger');
+      }
+    }
 
-/* ================================================================
-   PROGRESO EN FIRESTORE (por código)
-================================================================ */
-async function cargarProgreso() {
-  // Backup local
-  try { progreso = JSON.parse(localStorage.getItem(KEY_PROGRESO + '_' + (sesionActual?.codigo || ''))) || {}; } catch { progreso = {}; }
+    /* ================================================================
+       RENDER PRINCIPAL
+    ================================================================ */
+    function renderizarCurso() {
+      if (!curso) return;
+      document.getElementById('course-title').textContent = curso.titulo || 'Sin título';
+      document.getElementById('course-desc').textContent = curso.descripcion || '';
+      document.getElementById('ab-course-name').textContent = curso.titulo || '';
+      document.getElementById('admin-bar').classList.toggle('visible', adminMode);
+      document.body.classList.toggle('admin-mode', adminMode);
 
-  if (sesionActual && db) {
-    try {
-      const ref = doc(db, 'progreso', sesionActual.codigoId);
-      const snap = await getDoc(ref);
-      if (snap.exists()) progreso = snap.data().items || {};
-    } catch (_) {}
-  }
-}
+      const lista = document.getElementById('sections-list');
+      lista.innerHTML = '';
 
-async function guardarProgreso() {
-  if (sesionActual) {
-    localStorage.setItem(KEY_PROGRESO + '_' + sesionActual.codigo, JSON.stringify(progreso));
-    try {
-      const ref = doc(db, 'progreso', sesionActual.codigoId);
-      await setDoc(ref, { items: progreso, nombre: sesionActual.nombre, codigo: sesionActual.codigo, ultimaActividad: serverTimestamp() }, { merge: true });
-    } catch (_) {}
-    await actualizarPresencia();
-  } else {
-    localStorage.setItem(KEY_PROGRESO, JSON.stringify(progreso));
-  }
-}
+      if (!curso.secciones || curso.secciones.length === 0) {
+        lista.innerHTML = `<div class="empty-state"><div class="es-icon">📂</div><p>${adminMode ? 'Pulsa "+ Añadir sección" para comenzar.' : 'El curso está vacío.'}</p></div>`;
+        return;
+      }
+      curso.secciones.forEach(sec => lista.appendChild(crearTarjetaSeccion(sec)));
+      actualizarProgreso();
+    }
 
-/* ================================================================
-   SESIÓN LOCAL
-================================================================ */
-function guardarSesionLocal(ses) {
-  localStorage.setItem(KEY_SESION, JSON.stringify(ses));
-}
-
-function leerSesionGuardada() {
-  try { return JSON.parse(localStorage.getItem(KEY_SESION)); } catch { return null; }
-}
-
-async function verificarSesionGuardada(ses) {
-  try {
-    const codsSnap = await getDocs(collection(db, 'codigos'));
-    let valido = false;
-    codsSnap.forEach(d => {
-      if (d.id === ses.codigoId && !d.data().bloqueado) valido = true;
-    });
-    return valido;
-  } catch { return false; }
-}
-
-function logoutUser() {
-  if (!confirm('¿Cerrar sesión?')) return;
-  if (sesionActual && db) {
-    const ref = doc(db, 'sesiones', sesionActual.sessionId);
-    setDoc(ref, { activo: false }, { merge: true }).catch(() => {});
-  }
-  localStorage.removeItem(KEY_SESION);
-  sesionActual = null;
-  progreso = {};
-  document.getElementById('app').style.display = 'none';
-  mostrarPantallaAcceso();
-}
-
-/* ================================================================
-   IP HELPER
-================================================================ */
-async function obtenerIP() {
-  try {
-    const r = await fetch('https://api.ipify.org?format=json');
-    const d = await r.json();
-    return d.ip || 'desconocida';
-  } catch { return 'desconocida'; }
-}
-
-/* ================================================================
-   MOSTRAR APP
-================================================================ */
-function mostrarApp() {
-  document.getElementById('app').style.display = 'block';
-  const chip = document.getElementById('user-chip');
-  const btnLogout = document.getElementById('btn-logout-user');
-  if (sesionActual && !adminMode) {
-    chip.textContent = '👤 ' + sesionActual.nombre;
-    chip.style.display = 'inline-block';
-    btnLogout.style.display = 'inline-flex';
-  } else {
-    chip.style.display = 'none';
-    btnLogout.style.display = 'none';
-  }
-}
-
-/* ================================================================
-   GUARDAR CURSO
-================================================================ */
-async function guardarCurso() {
-  if (!db) return;
-  try {
-    const ref = doc(db, 'cursos', 'principal');
-    await setDoc(ref, { data: JSON.stringify(curso) });
-  } catch (err) {
-    mostrarToast('Error al guardar: ' + err.message, 'danger');
-  }
-}
-
-/* ================================================================
-   RENDER PRINCIPAL
-================================================================ */
-function renderizarCurso() {
-  if (!curso) return;
-  document.getElementById('course-title').textContent = curso.titulo || 'Sin título';
-  document.getElementById('course-desc').textContent = curso.descripcion || '';
-  document.getElementById('ab-course-name').textContent = curso.titulo || '';
-  document.getElementById('admin-bar').classList.toggle('visible', adminMode);
-  document.body.classList.toggle('admin-mode', adminMode);
-
-  const lista = document.getElementById('sections-list');
-  lista.innerHTML = '';
-
-  if (!curso.secciones || curso.secciones.length === 0) {
-    lista.innerHTML = `<div class="empty-state"><div class="es-icon">📂</div><p>${adminMode ? 'Pulsa "+ Añadir sección" para comenzar.' : 'El curso está vacío.'}</p></div>`;
-    return;
-  }
-  curso.secciones.forEach(sec => lista.appendChild(crearTarjetaSeccion(sec)));
-  actualizarProgreso();
-}
-
-/* ================================================================
-   SECCIÓN CARD
-================================================================ */
-function crearTarjetaSeccion(sec) {
-  const total = sec.elementos?.length || 0;
-  const completados = (sec.elementos || []).filter(e => progreso[e.id]).length;
-  const card = document.createElement('div');
-  card.className = 'section-card' + (sec.colapsada ? ' collapsed' : '');
-  card.dataset.id = sec.id;
-  card.innerHTML = `
+    /* ================================================================
+       SECCIÓN CARD
+    ================================================================ */
+    function crearTarjetaSeccion(sec) {
+      const total = sec.elementos?.length || 0;
+      const completados = (sec.elementos || []).filter(e => progreso[e.id]).length;
+      const card = document.createElement('div');
+      card.className = 'section-card' + (sec.colapsada ? ' collapsed' : '');
+      card.dataset.id = sec.id;
+      card.innerHTML = `
     <div class="section-header">
       <span class="drag-handle" draggable="true">⠿</span>
       <span class="section-chevron">▾</span>
@@ -901,52 +2276,52 @@ function crearTarjetaSeccion(sec) {
       <button class="btn-add-item">＋ Añadir elemento</button>
     </div>`;
 
-  const header = card.querySelector('.section-header');
-  const adminBtns = card.querySelector('.section-admin-btns');
-  header.addEventListener('click', e => {
-    if (adminBtns.contains(e.target) || e.target.closest('.drag-handle')) return;
-    sec.colapsada = !sec.colapsada;
-    card.classList.toggle('collapsed', sec.colapsada);
-    if (adminMode) guardarCurso();
-  });
-  adminBtns.children[0].addEventListener('click', () => editarSeccion(sec.id));
-  adminBtns.children[1].addEventListener('click', () => eliminarSeccion(sec.id));
-  card.querySelector('.btn-add-item').addEventListener('click', () => openAddItemModal(sec.id));
+      const header = card.querySelector('.section-header');
+      const adminBtns = card.querySelector('.section-admin-btns');
+      header.addEventListener('click', e => {
+        if (adminBtns.contains(e.target) || e.target.closest('.drag-handle')) return;
+        sec.colapsada = !sec.colapsada;
+        card.classList.toggle('collapsed', sec.colapsada);
+        if (adminMode) guardarCurso();
+      });
+      adminBtns.children[0].addEventListener('click', () => editarSeccion(sec.id));
+      adminBtns.children[1].addEventListener('click', () => eliminarSeccion(sec.id));
+      card.querySelector('.btn-add-item').addEventListener('click', () => openAddItemModal(sec.id));
 
-  const handle = card.querySelector('.drag-handle');
-  handle.addEventListener('dragstart', e => { dragSrcSeccion = card; e.dataTransfer.effectAllowed = 'move'; setTimeout(() => card.classList.add('dragging'), 0); });
-  handle.addEventListener('dragend', () => { card.classList.remove('dragging'); document.querySelectorAll('.section-card').forEach(c => c.classList.remove('drag-over')); });
-  card.addEventListener('dragover', e => { e.preventDefault(); if (dragSrcSeccion && dragSrcSeccion !== card) card.classList.add('drag-over'); });
-  card.addEventListener('dragleave', () => card.classList.remove('drag-over'));
-  card.addEventListener('drop', async e => {
-    e.preventDefault(); card.classList.remove('drag-over');
-    if (!dragSrcSeccion || dragSrcSeccion === card) return;
-    const si = curso.secciones.findIndex(s => s.id === dragSrcSeccion.dataset.id);
-    const di = curso.secciones.findIndex(s => s.id === card.dataset.id);
-    if (si < 0 || di < 0) return;
-    const [r] = curso.secciones.splice(si, 1);
-    curso.secciones.splice(di, 0, r);
-    await guardarCurso();
-  });
+      const handle = card.querySelector('.drag-handle');
+      handle.addEventListener('dragstart', e => { dragSrcSeccion = card; e.dataTransfer.effectAllowed = 'move'; setTimeout(() => card.classList.add('dragging'), 0); });
+      handle.addEventListener('dragend', () => { card.classList.remove('dragging'); document.querySelectorAll('.section-card').forEach(c => c.classList.remove('drag-over')); });
+      card.addEventListener('dragover', e => { e.preventDefault(); if (dragSrcSeccion && dragSrcSeccion !== card) card.classList.add('drag-over'); });
+      card.addEventListener('dragleave', () => card.classList.remove('drag-over'));
+      card.addEventListener('drop', async e => {
+        e.preventDefault(); card.classList.remove('drag-over');
+        if (!dragSrcSeccion || dragSrcSeccion === card) return;
+        const si = curso.secciones.findIndex(s => s.id === dragSrcSeccion.dataset.id);
+        const di = curso.secciones.findIndex(s => s.id === card.dataset.id);
+        if (si < 0 || di < 0) return;
+        const [r] = curso.secciones.splice(si, 1);
+        curso.secciones.splice(di, 0, r);
+        await guardarCurso();
+      });
 
-  (sec.elementos || []).forEach(el => card.querySelector(`#items-${sec.id}`).appendChild(crearTarjetaElemento(el, sec.id)));
-  return card;
-}
+      (sec.elementos || []).forEach(el => card.querySelector(`#items-${sec.id}`).appendChild(crearTarjetaElemento(el, sec.id)));
+      return card;
+    }
 
-/* ================================================================
-   ELEMENTO CARD
-================================================================ */
-function crearTarjetaElemento(el, secId) {
-  const completado = !!progreso[el.id];
-  const div = document.createElement('div');
-  div.className = 'item-card' + (completado ? ' completed' : '');
-  div.dataset.id = el.id;
-  const tipoBadge = el.tipo === 'video'
-    ? '<span class="item-type-badge badge-video">▶ Vídeo</span>'
-    : el.tipo === 'imagen'
-    ? '<span class="item-type-badge badge-imagen">🖼️ Imagen</span>'
-    : '<span class="item-type-badge badge-text">📄 Texto</span>';
-  div.innerHTML = `
+    /* ================================================================
+       ELEMENTO CARD
+    ================================================================ */
+    function crearTarjetaElemento(el, secId) {
+      const completado = !!progreso[el.id];
+      const div = document.createElement('div');
+      div.className = 'item-card' + (completado ? ' completed' : '');
+      div.dataset.id = el.id;
+      const tipoBadge = el.tipo === 'video'
+        ? '<span class="item-type-badge badge-video">▶ Vídeo</span>'
+        : el.tipo === 'imagen'
+          ? '<span class="item-type-badge badge-imagen">🖼️ Imagen</span>'
+          : '<span class="item-type-badge badge-text">📄 Texto</span>';
+      div.innerHTML = `
     <div class="item-header">
       <span class="item-drag-handle" draggable="true">⠿</span>
       <input type="checkbox" class="item-checkbox" ${completado ? 'checked' : ''} />
@@ -959,120 +2334,120 @@ function crearTarjetaElemento(el, secId) {
     </div>
     <div class="item-body" id="body-${el.id}" style="display:none;"></div>`;
 
-  const body = div.querySelector(`#body-${el.id}`);
-  let html = '';
-  if (el.descripcion) html += `<p class="item-description">${escHtml(el.descripcion)}</p>`;
-  if (el.tipo === 'video' && el.videoUrl) {
-    const embed = generarIframeUrl(el.videoUrl);
-    html += embed
-      ? `<div class="video-wrap"><iframe src="${embed}" allowfullscreen allow="accelerometer;autoplay;clipboard-write;encrypted-media;gyroscope;picture-in-picture"></iframe></div>`
-      : `<p style="color:var(--warn);font-size:13px;">⚠️ No se pudo generar previsualización. <a href="${escHtml(el.videoUrl)}" target="_blank">Abrir →</a></p>`;
-  }
-  if (el.tipo === 'imagen' && el.imagenUrl) {
-    html += `<div class="item-imagen-wrap"><img src="${escHtml(el.imagenUrl)}" alt="${escHtml(el.titulo)}" loading="lazy" /></div>`;
-  }
-  if (el.enlaces?.length) {
-    html += '<div class="attachments-list">';
-    el.enlaces.forEach(e => { html += `<a class="link-chip" href="${escHtml(e.url)}" target="_blank" rel="noopener"><span class="chip-icon">🔗</span><span class="chip-label">${escHtml(e.nombre)}</span></a>`; });
-    html += '</div>';
-  }
-  if (html) body.innerHTML = html;
+      const body = div.querySelector(`#body-${el.id}`);
+      let html = '';
+      if (el.descripcion) html += `<p class="item-description">${escHtml(el.descripcion)}</p>`;
+      if (el.tipo === 'video' && el.videoUrl) {
+        const embed = generarIframeUrl(el.videoUrl);
+        html += embed
+          ? `<div class="video-wrap"><iframe src="${embed}" allowfullscreen allow="accelerometer;autoplay;clipboard-write;encrypted-media;gyroscope;picture-in-picture"></iframe></div>`
+          : `<p style="color:var(--warn);font-size:13px;">⚠️ No se pudo generar previsualización. <a href="${escHtml(el.videoUrl)}" target="_blank">Abrir →</a></p>`;
+      }
+      if (el.tipo === 'imagen' && el.imagenUrl) {
+        html += `<div class="item-imagen-wrap"><img src="${escHtml(el.imagenUrl)}" alt="${escHtml(el.titulo)}" loading="lazy" /></div>`;
+      }
+      if (el.enlaces?.length) {
+        html += '<div class="attachments-list">';
+        el.enlaces.forEach(e => { html += `<a class="link-chip" href="${escHtml(e.url)}" target="_blank" rel="noopener"><span class="chip-icon">🔗</span><span class="chip-label">${escHtml(e.nombre)}</span></a>`; });
+        html += '</div>';
+      }
+      if (html) body.innerHTML = html;
 
-  div.querySelector('.item-title').addEventListener('click', () => {
-    if (!body.innerHTML.trim()) return;
-    body.style.display = body.style.display === 'none' ? 'block' : 'none';
-  });
+      div.querySelector('.item-title').addEventListener('click', () => {
+        if (!body.innerHTML.trim()) return;
+        body.style.display = body.style.display === 'none' ? 'block' : 'none';
+      });
 
-  div.querySelector('.item-checkbox').addEventListener('change', async e => {
-    progreso[el.id] = e.target.checked;
-    await guardarProgreso();
-    div.classList.toggle('completed', e.target.checked);
-    actualizarProgreso();
-    renderizarContadoresSecciones();
-    actualizarBotonReset();
-  });
+      div.querySelector('.item-checkbox').addEventListener('change', async e => {
+        progreso[el.id] = e.target.checked;
+        await guardarProgreso();
+        div.classList.toggle('completed', e.target.checked);
+        actualizarProgreso();
+        renderizarContadoresSecciones();
+        actualizarBotonReset();
+      });
 
-  const adminBtns = div.querySelector('.item-admin-btns');
-  adminBtns.children[0].addEventListener('click', () => editarElemento(secId, el.id));
-  adminBtns.children[1].addEventListener('click', () => eliminarElemento(secId, el.id));
+      const adminBtns = div.querySelector('.item-admin-btns');
+      adminBtns.children[0].addEventListener('click', () => editarElemento(secId, el.id));
+      adminBtns.children[1].addEventListener('click', () => eliminarElemento(secId, el.id));
 
-  const handle = div.querySelector('.item-drag-handle');
-  handle.addEventListener('dragstart', e => { dragSrcElement = div; dragSrcSectionId = secId; e.dataTransfer.effectAllowed = 'move'; setTimeout(() => div.classList.add('dragging'), 0); });
-  handle.addEventListener('dragend', () => { div.classList.remove('dragging'); document.querySelectorAll('.item-card').forEach(c => c.classList.remove('drag-over')); });
-  div.addEventListener('dragover', e => { e.preventDefault(); if (dragSrcElement && dragSrcElement !== div) div.classList.add('drag-over'); });
-  div.addEventListener('dragleave', () => div.classList.remove('drag-over'));
-  div.addEventListener('drop', async e => {
-    e.preventDefault(); div.classList.remove('drag-over');
-    if (!dragSrcElement || dragSrcElement === div) return;
-    const srcSec = curso.secciones.find(s => s.id === dragSrcSectionId);
-    const destSec = curso.secciones.find(s => s.id === secId);
-    if (!srcSec || !destSec) return;
-    const si = srcSec.elementos.findIndex(x => x.id === dragSrcElement.dataset.id);
-    const di = destSec.elementos.findIndex(x => x.id === div.dataset.id);
-    if (si < 0 || di < 0) return;
-    const [r] = srcSec.elementos.splice(si, 1);
-    destSec.elementos.splice(di, 0, r);
-    await guardarCurso();
-  });
-  return div;
-}
-
-/* ================================================================
-   PROGRESO UI
-================================================================ */
-function actualizarProgreso() {
-  let total = 0, completados = 0;
-  (curso?.secciones || []).forEach(sec => (sec.elementos || []).forEach(el => { total++; if (progreso[el.id]) completados++; }));
-  const pct = total ? Math.round((completados / total) * 100) : 0;
-  document.getElementById('progress-bar-inner').style.width = pct + '%';
-  document.getElementById('progress-pct').textContent = pct + '%';
-  document.getElementById('header-progress').textContent = pct + '% completado';
-  actualizarBotonReset();
-}
-
-function renderizarContadoresSecciones() {
-  (curso?.secciones || []).forEach(sec => {
-    const total = sec.elementos?.length || 0;
-    const comp = (sec.elementos || []).filter(e => progreso[e.id]).length;
-    const mini = document.querySelector(`.section-card[data-id="${sec.id}"] .section-progress-mini`);
-    if (mini) mini.textContent = `${comp}/${total}`;
-  });
-}
-
-function actualizarBotonReset() {
-  const btn = document.getElementById('btn-reset-progress');
-  if (btn) btn.style.display = Object.values(progreso).some(v => v) ? 'inline-flex' : 'none';
-}
-
-async function resetProgreso() {
-  if (!confirm('¿Reiniciar todo tu progreso?')) return;
-  progreso = {};
-  await guardarProgreso();
-  document.querySelectorAll('.item-checkbox').forEach(c => { c.checked = false; });
-  document.querySelectorAll('.item-card').forEach(c => c.classList.remove('completed'));
-  actualizarProgreso();
-  renderizarContadoresSecciones();
-  mostrarToast('Progreso reiniciado');
-}
-
-/* ================================================================
-   ADMIN LOGIN (triple clic logo)
-================================================================ */
-function setupLogoTripleClick() {
-  document.getElementById('logo-icon').addEventListener('click', () => {
-    logoClickCount++;
-    clearTimeout(logoClickTimer);
-    if (logoClickCount >= 3) {
-      logoClickCount = 0;
-      if (!adminMode) mostrarLoginAdmin();
-    } else {
-      logoClickTimer = setTimeout(() => { logoClickCount = 0; }, 600);
+      const handle = div.querySelector('.item-drag-handle');
+      handle.addEventListener('dragstart', e => { dragSrcElement = div; dragSrcSectionId = secId; e.dataTransfer.effectAllowed = 'move'; setTimeout(() => div.classList.add('dragging'), 0); });
+      handle.addEventListener('dragend', () => { div.classList.remove('dragging'); document.querySelectorAll('.item-card').forEach(c => c.classList.remove('drag-over')); });
+      div.addEventListener('dragover', e => { e.preventDefault(); if (dragSrcElement && dragSrcElement !== div) div.classList.add('drag-over'); });
+      div.addEventListener('dragleave', () => div.classList.remove('drag-over'));
+      div.addEventListener('drop', async e => {
+        e.preventDefault(); div.classList.remove('drag-over');
+        if (!dragSrcElement || dragSrcElement === div) return;
+        const srcSec = curso.secciones.find(s => s.id === dragSrcSectionId);
+        const destSec = curso.secciones.find(s => s.id === secId);
+        if (!srcSec || !destSec) return;
+        const si = srcSec.elementos.findIndex(x => x.id === dragSrcElement.dataset.id);
+        const di = destSec.elementos.findIndex(x => x.id === div.dataset.id);
+        if (si < 0 || di < 0) return;
+        const [r] = srcSec.elementos.splice(si, 1);
+        destSec.elementos.splice(di, 0, r);
+        await guardarCurso();
+      });
+      return div;
     }
-  });
-}
 
-function mostrarLoginAdmin() {
-  abrirModal(`
+    /* ================================================================
+       PROGRESO UI
+    ================================================================ */
+    function actualizarProgreso() {
+      let total = 0, completados = 0;
+      (curso?.secciones || []).forEach(sec => (sec.elementos || []).forEach(el => { total++; if (progreso[el.id]) completados++; }));
+      const pct = total ? Math.round((completados / total) * 100) : 0;
+      document.getElementById('progress-bar-inner').style.width = pct + '%';
+      document.getElementById('progress-pct').textContent = pct + '%';
+      document.getElementById('header-progress').textContent = pct + '% completado';
+      actualizarBotonReset();
+    }
+
+    function renderizarContadoresSecciones() {
+      (curso?.secciones || []).forEach(sec => {
+        const total = sec.elementos?.length || 0;
+        const comp = (sec.elementos || []).filter(e => progreso[e.id]).length;
+        const mini = document.querySelector(`.section-card[data-id="${sec.id}"] .section-progress-mini`);
+        if (mini) mini.textContent = `${comp}/${total}`;
+      });
+    }
+
+    function actualizarBotonReset() {
+      const btn = document.getElementById('btn-reset-progress');
+      if (btn) btn.style.display = Object.values(progreso).some(v => v) ? 'inline-flex' : 'none';
+    }
+
+    async function resetProgreso() {
+      if (!confirm('¿Reiniciar todo tu progreso?')) return;
+      progreso = {};
+      await guardarProgreso();
+      document.querySelectorAll('.item-checkbox').forEach(c => { c.checked = false; });
+      document.querySelectorAll('.item-card').forEach(c => c.classList.remove('completed'));
+      actualizarProgreso();
+      renderizarContadoresSecciones();
+      mostrarToast('Progreso reiniciado');
+    }
+
+    /* ================================================================
+       ADMIN LOGIN (triple clic logo)
+    ================================================================ */
+    function setupLogoTripleClick() {
+      document.getElementById('logo-icon').addEventListener('click', () => {
+        logoClickCount++;
+        clearTimeout(logoClickTimer);
+        if (logoClickCount >= 3) {
+          logoClickCount = 0;
+          if (!adminMode) mostrarLoginAdmin();
+        } else {
+          logoClickTimer = setTimeout(() => { logoClickCount = 0; }, 600);
+        }
+      });
+    }
+
+    function mostrarLoginAdmin() {
+      abrirModal(`
     <h2 class="modal-title">🔐 Acceso de Administrador</h2>
     <div class="form-group">
       <label>Email</label>
@@ -1084,123 +2459,123 @@ function mostrarLoginAdmin() {
       <button class="btn btn-secondary" onclick="cerrarModal()">Cancelar</button>
       <button class="btn btn-primary" onclick="loginAdmin()">Entrar</button>
     </div>`);
-  setTimeout(() => {
-    document.getElementById('inp-admin-pass')?.addEventListener('keydown', e => { if (e.key === 'Enter') loginAdmin(); });
-  }, 50);
-}
+      setTimeout(() => {
+        document.getElementById('inp-admin-pass')?.addEventListener('keydown', e => { if (e.key === 'Enter') loginAdmin(); });
+      }, 50);
+    }
 
-async function loginAdmin() {
-  const email = document.getElementById('inp-admin-email')?.value.trim();
-  const pass = document.getElementById('inp-admin-pass')?.value;
-  if (!email || !pass) { mostrarToast('Completa email y contraseña', 'danger'); return; }
-  try {
-    await signInWithEmailAndPassword(auth, email, pass);
-    adminMode = true;
-    cerrarModal();
-    if (!curso) await cargarCurso();
-    mostrarApp();
-    renderizarCurso();
-    mostrarToast('Modo administrador activado', 'success');
-  } catch (_) {
-    mostrarToast('Credenciales incorrectas', 'danger');
-  }
-}
+    async function loginAdmin() {
+      const email = document.getElementById('inp-admin-email')?.value.trim();
+      const pass = document.getElementById('inp-admin-pass')?.value;
+      if (!email || !pass) { mostrarToast('Completa email y contraseña', 'danger'); return; }
+      try {
+        await signInWithEmailAndPassword(auth, email, pass);
+        adminMode = true;
+        cerrarModal();
+        if (!curso) await cargarCurso();
+        mostrarApp();
+        renderizarCurso();
+        mostrarToast('Modo administrador activado', 'success');
+      } catch (_) {
+        mostrarToast('Credenciales incorrectas', 'danger');
+      }
+    }
 
-async function logoutAdmin() {
-  await signOut(auth);
-  adminMode = false;
-  ocultarPanelUsuarios();
-  renderizarCurso();
-  mostrarToast('Sesión cerrada');
-}
+    async function logoutAdmin() {
+      await signOut(auth);
+      adminMode = false;
+      ocultarPanelUsuarios();
+      renderizarCurso();
+      mostrarToast('Sesión cerrada');
+    }
 
-/* ================================================================
-   EDITAR CURSO / SECCIONES / ELEMENTOS (igual que antes)
-================================================================ */
-function editCourseInfo() {
-  abrirModal(`
+    /* ================================================================
+       EDITAR CURSO / SECCIONES / ELEMENTOS (igual que antes)
+    ================================================================ */
+    function editCourseInfo() {
+      abrirModal(`
     <h2 class="modal-title">✏️ Editar información del curso</h2>
-    <div class="form-group"><label>Título</label><input type="text" id="inp-ctitulo" value="${escHtml(curso.titulo||'')}" autofocus /></div>
-    <div class="form-group"><label>Descripción</label><textarea id="inp-cdesc">${escHtml(curso.descripcion||'')}</textarea></div>
+    <div class="form-group"><label>Título</label><input type="text" id="inp-ctitulo" value="${escHtml(curso.titulo || '')}" autofocus /></div>
+    <div class="form-group"><label>Descripción</label><textarea id="inp-cdesc">${escHtml(curso.descripcion || '')}</textarea></div>
     <div class="modal-actions">
       <button class="btn btn-secondary" onclick="cerrarModal()">Cancelar</button>
       <button class="btn btn-primary" onclick="guardarInfoCurso()">Guardar</button>
     </div>`);
-}
-async function guardarInfoCurso() {
-  curso.titulo = document.getElementById('inp-ctitulo').value.trim() || 'Sin título';
-  curso.descripcion = document.getElementById('inp-cdesc').value.trim();
-  await guardarCurso(); cerrarModal(); mostrarToast('Información actualizada', 'success');
-}
+    }
+    async function guardarInfoCurso() {
+      curso.titulo = document.getElementById('inp-ctitulo').value.trim() || 'Sin título';
+      curso.descripcion = document.getElementById('inp-cdesc').value.trim();
+      await guardarCurso(); cerrarModal(); mostrarToast('Información actualizada', 'success');
+    }
 
-function openAddSectionModal() {
-  abrirModal(`
+    function openAddSectionModal() {
+      abrirModal(`
     <h2 class="modal-title">➕ Nueva sección</h2>
     <div class="form-group"><label>Título</label><input type="text" id="inp-sec-titulo" placeholder="Ej: Módulo 1" autofocus /></div>
     <div class="modal-actions">
       <button class="btn btn-secondary" onclick="cerrarModal()">Cancelar</button>
       <button class="btn btn-primary" onclick="guardarNuevaSeccion()">Crear</button>
     </div>`);
-}
-async function guardarNuevaSeccion() {
-  const titulo = document.getElementById('inp-sec-titulo').value.trim();
-  if (!titulo) { mostrarToast('Título obligatorio', 'danger'); return; }
-  curso.secciones = curso.secciones || [];
-  curso.secciones.push({ id: generarId('s'), titulo, colapsada: false, elementos: [] });
-  await guardarCurso(); cerrarModal(); mostrarToast('Sección creada', 'success');
-}
+    }
+    async function guardarNuevaSeccion() {
+      const titulo = document.getElementById('inp-sec-titulo').value.trim();
+      if (!titulo) { mostrarToast('Título obligatorio', 'danger'); return; }
+      curso.secciones = curso.secciones || [];
+      curso.secciones.push({ id: generarId('s'), titulo, colapsada: false, elementos: [] });
+      await guardarCurso(); cerrarModal(); mostrarToast('Sección creada', 'success');
+    }
 
-function editarSeccion(secId) {
-  const sec = curso.secciones.find(s => s.id === secId);
-  if (!sec) return;
-  abrirModal(`
+    function editarSeccion(secId) {
+      const sec = curso.secciones.find(s => s.id === secId);
+      if (!sec) return;
+      abrirModal(`
     <h2 class="modal-title">✏️ Editar sección</h2>
     <div class="form-group"><label>Título</label><input type="text" id="inp-es-titulo" value="${escHtml(sec.titulo)}" autofocus /></div>
     <div class="modal-actions">
       <button class="btn btn-secondary" onclick="cerrarModal()">Cancelar</button>
       <button class="btn btn-primary" onclick="guardarEdicionSeccion('${secId}')">Guardar</button>
     </div>`);
-}
-async function guardarEdicionSeccion(secId) {
-  const sec = curso.secciones.find(s => s.id === secId);
-  const titulo = document.getElementById('inp-es-titulo').value.trim();
-  if (!titulo) { mostrarToast('Título obligatorio', 'danger'); return; }
-  sec.titulo = titulo; await guardarCurso(); cerrarModal(); mostrarToast('Sección actualizada', 'success');
-}
-async function eliminarSeccion(secId) {
-  if (!confirm('¿Eliminar esta sección y todos sus elementos?')) return;
-  curso.secciones = curso.secciones.filter(s => s.id !== secId);
-  await guardarCurso(); mostrarToast('Sección eliminada');
-}
+    }
+    async function guardarEdicionSeccion(secId) {
+      const sec = curso.secciones.find(s => s.id === secId);
+      const titulo = document.getElementById('inp-es-titulo').value.trim();
+      if (!titulo) { mostrarToast('Título obligatorio', 'danger'); return; }
+      sec.titulo = titulo; await guardarCurso(); cerrarModal(); mostrarToast('Sección actualizada', 'success');
+    }
+    async function eliminarSeccion(secId) {
+      if (!confirm('¿Eliminar esta sección y todos sus elementos?')) return;
+      curso.secciones = curso.secciones.filter(s => s.id !== secId);
+      await guardarCurso(); mostrarToast('Sección eliminada');
+    }
 
-function openAddItemModal(secId) { modalEditSecId = secId; modalEditElId = null; modalEnlaces = []; abrirModal(htmlModalElemento(null)); renderizarEnlacesModal(); }
-function editarElemento(secId, elId) {
-  const sec = curso.secciones.find(s => s.id === secId);
-  const el = sec?.elementos.find(e => e.id === elId);
-  if (!el) return;
-  modalEditSecId = secId; modalEditElId = elId;
-  modalEnlaces = el.enlaces ? JSON.parse(JSON.stringify(el.enlaces)) : [];
-  abrirModal(htmlModalElemento(el)); renderizarEnlacesModal();
-}
-function htmlModalElemento(el) {
-  const tipo = el?.tipo || 'video';
-  return `
+    function openAddItemModal(secId) { modalEditSecId = secId; modalEditElId = null; modalEnlaces = []; abrirModal(htmlModalElemento(null)); renderizarEnlacesModal(); }
+    function editarElemento(secId, elId) {
+      const sec = curso.secciones.find(s => s.id === secId);
+      const el = sec?.elementos.find(e => e.id === elId);
+      if (!el) return;
+      modalEditSecId = secId; modalEditElId = elId;
+      modalEnlaces = el.enlaces ? JSON.parse(JSON.stringify(el.enlaces)) : [];
+      abrirModal(htmlModalElemento(el)); renderizarEnlacesModal();
+    }
+    function htmlModalElemento(el) {
+      const tipo = el?.tipo || 'video';
+      return `
     <h2 class="modal-title">${el ? '✏️ Editar elemento' : '➕ Nuevo elemento'}</h2>
     <div class="type-selector">
-      <button class="type-btn ${tipo==='video'?'active':''}" onclick="seleccionarTipo('video')">▶ Vídeo</button>
-      <button class="type-btn ${tipo==='texto'?'active':''}" onclick="seleccionarTipo('texto')">📄 Texto</button>
-      <button class="type-btn ${tipo==='imagen'?'active':''}" onclick="seleccionarTipo('imagen')">🖼️ Imagen</button>
+      <button class="type-btn ${tipo === 'video' ? 'active' : ''}" onclick="seleccionarTipo('video')">▶ Vídeo</button>
+      <button class="type-btn ${tipo === 'texto' ? 'active' : ''}" onclick="seleccionarTipo('texto')">📄 Texto</button>
+      <button class="type-btn ${tipo === 'imagen' ? 'active' : ''}" onclick="seleccionarTipo('imagen')">🖼️ Imagen</button>
     </div>
-    <div class="form-group"><label>Título</label><input type="text" id="inp-el-titulo" value="${escHtml(el?.titulo||'')}" autofocus /></div>
-    <div class="form-group" id="wrap-url" style="${tipo!=='video'?'display:none':''}">
+    <div class="form-group"><label>Título</label><input type="text" id="inp-el-titulo" value="${escHtml(el?.titulo || '')}" autofocus /></div>
+    <div class="form-group" id="wrap-url" style="${tipo !== 'video' ? 'display:none' : ''}">
       <label>URL del vídeo</label>
-      <input type="url" id="inp-el-url" value="${escHtml(el?.videoUrl||'')}" placeholder="https://www.youtube.com/watch?v=..." />
+      <input type="url" id="inp-el-url" value="${escHtml(el?.videoUrl || '')}" placeholder="https://www.youtube.com/watch?v=..." />
     </div>
-    <div class="form-group" id="wrap-img-url" style="${tipo!=='imagen'?'display:none':''}">
+    <div class="form-group" id="wrap-img-url" style="${tipo !== 'imagen' ? 'display:none' : ''}">
       <label>URL de la imagen</label>
-      <input type="url" id="inp-el-imgurl" value="${escHtml(el?.imagenUrl||'')}" placeholder="https://ejemplo.com/imagen.jpg" />
+      <input type="url" id="inp-el-imgurl" value="${escHtml(el?.imagenUrl || '')}" placeholder="https://ejemplo.com/imagen.jpg" />
     </div>
-    <div class="form-group"><label>Descripción (opcional)</label><textarea id="inp-el-desc">${escHtml(el?.descripcion||'')}</textarea></div>
+    <div class="form-group"><label>Descripción (opcional)</label><textarea id="inp-el-desc">${escHtml(el?.descripcion || '')}</textarea></div>
     <div class="form-group">
       <label>Recursos / Links</label>
       <div class="link-add-row">
@@ -1214,80 +2589,80 @@ function htmlModalElemento(el) {
       <button class="btn btn-secondary" onclick="cerrarModal()">Cancelar</button>
       <button class="btn btn-primary" id="btn-save-el" onclick="guardarElemento()">Guardar</button>
     </div>`;
-}
-function seleccionarTipo(tipo) {
-  document.querySelectorAll('.type-btn').forEach(b => {
-    const t = b.textContent.trim();
-    b.classList.toggle('active', (tipo==='video'&&t.startsWith('▶'))||(tipo==='texto'&&t.startsWith('📄'))||(tipo==='imagen'&&t.startsWith('🖼️')));
-  });
-  const wrapUrl = document.getElementById('wrap-url');
-  if (wrapUrl) wrapUrl.style.display = tipo === 'video' ? 'block' : 'none';
-  const wrapImg = document.getElementById('wrap-img-url');
-  if (wrapImg) wrapImg.style.display = tipo === 'imagen' ? 'block' : 'none';
-}
-function onAddLink() {
-  const nombre = document.getElementById('inp-link-nombre')?.value.trim();
-  const url = document.getElementById('inp-link-url')?.value.trim();
-  if (!nombre) { mostrarToast('Escribe un nombre', 'danger'); return; }
-  if (!url || !/^https?:\/\/.+/.test(url)) { mostrarToast('URL inválida', 'danger'); return; }
-  modalEnlaces.push({ nombre, url }); renderizarEnlacesModal();
-  document.getElementById('inp-link-nombre').value = '';
-  document.getElementById('inp-link-url').value = '';
-}
-function renderizarEnlacesModal() {
-  const lista = document.getElementById('modal-links-list');
-  if (!lista) return;
-  lista.innerHTML = '';
-  modalEnlaces.forEach((e, idx) => {
-    const div = document.createElement('div');
-    div.className = 'modal-link-item';
-    div.innerHTML = `<span class="ml-icon">🔗</span><span class="ml-name">${escHtml(e.nombre)}</span><span class="ml-url">${escHtml(e.url)}</span><button onclick="quitarEnlaceModal(${idx})">✕</button>`;
-    lista.appendChild(div);
-  });
-}
-function quitarEnlaceModal(idx) { modalEnlaces.splice(idx, 1); renderizarEnlacesModal(); }
-async function guardarElemento() {
-  const titulo = document.getElementById('inp-el-titulo')?.value.trim();
-  if (!titulo) { mostrarToast('Título obligatorio', 'danger'); return; }
-  const tipoActivo = document.querySelector('.type-btn.active');
-  const tipoTexto = tipoActivo?.textContent.trim();
-  const tipo = tipoTexto?.startsWith('▶') ? 'video' : tipoTexto?.startsWith('🖼️') ? 'imagen' : 'texto';
-  const desc = document.getElementById('inp-el-desc')?.value.trim() || '';
-  const url = document.getElementById('inp-el-url')?.value.trim() || '';
-  const imgUrl = document.getElementById('inp-el-imgurl')?.value.trim() || '';
-  const sec = curso.secciones.find(s => s.id === modalEditSecId);
-  if (!sec) return;
-  const btn = document.getElementById('btn-save-el');
-  if (btn) { btn.disabled = true; btn.textContent = 'Guardando…'; }
-  try {
-    if (modalEditElId) {
-      const el = sec.elementos.find(e => e.id === modalEditElId);
-      if (el) Object.assign(el, { titulo, tipo, descripcion: desc, videoUrl: tipo==='video'?url:'', imagenUrl: tipo==='imagen'?imgUrl:'', enlaces: modalEnlaces });
-    } else {
-      sec.elementos = sec.elementos || [];
-      sec.elementos.push({ id: generarId('e'), titulo, tipo, descripcion: desc, videoUrl: tipo==='video'?url:'', imagenUrl: tipo==='imagen'?imgUrl:'', enlaces: modalEnlaces });
     }
-    await guardarCurso(); cerrarModal(); mostrarToast(modalEditElId ? 'Elemento actualizado' : 'Elemento añadido', 'success');
-  } catch (_) { if (btn) { btn.disabled = false; btn.textContent = 'Guardar'; } }
-}
-async function eliminarElemento(secId, elId) {
-  if (!confirm('¿Eliminar este elemento?')) return;
-  const sec = curso.secciones.find(s => s.id === secId);
-  if (!sec) return;
-  sec.elementos = sec.elementos.filter(e => e.id !== elId);
-  await guardarCurso(); mostrarToast('Elemento eliminado');
-}
+    function seleccionarTipo(tipo) {
+      document.querySelectorAll('.type-btn').forEach(b => {
+        const t = b.textContent.trim();
+        b.classList.toggle('active', (tipo === 'video' && t.startsWith('▶')) || (tipo === 'texto' && t.startsWith('📄')) || (tipo === 'imagen' && t.startsWith('🖼️')));
+      });
+      const wrapUrl = document.getElementById('wrap-url');
+      if (wrapUrl) wrapUrl.style.display = tipo === 'video' ? 'block' : 'none';
+      const wrapImg = document.getElementById('wrap-img-url');
+      if (wrapImg) wrapImg.style.display = tipo === 'imagen' ? 'block' : 'none';
+    }
+    function onAddLink() {
+      const nombre = document.getElementById('inp-link-nombre')?.value.trim();
+      const url = document.getElementById('inp-link-url')?.value.trim();
+      if (!nombre) { mostrarToast('Escribe un nombre', 'danger'); return; }
+      if (!url || !/^https?:\/\/.+/.test(url)) { mostrarToast('URL inválida', 'danger'); return; }
+      modalEnlaces.push({ nombre, url }); renderizarEnlacesModal();
+      document.getElementById('inp-link-nombre').value = '';
+      document.getElementById('inp-link-url').value = '';
+    }
+    function renderizarEnlacesModal() {
+      const lista = document.getElementById('modal-links-list');
+      if (!lista) return;
+      lista.innerHTML = '';
+      modalEnlaces.forEach((e, idx) => {
+        const div = document.createElement('div');
+        div.className = 'modal-link-item';
+        div.innerHTML = `<span class="ml-icon">🔗</span><span class="ml-name">${escHtml(e.nombre)}</span><span class="ml-url">${escHtml(e.url)}</span><button onclick="quitarEnlaceModal(${idx})">✕</button>`;
+        lista.appendChild(div);
+      });
+    }
+    function quitarEnlaceModal(idx) { modalEnlaces.splice(idx, 1); renderizarEnlacesModal(); }
+    async function guardarElemento() {
+      const titulo = document.getElementById('inp-el-titulo')?.value.trim();
+      if (!titulo) { mostrarToast('Título obligatorio', 'danger'); return; }
+      const tipoActivo = document.querySelector('.type-btn.active');
+      const tipoTexto = tipoActivo?.textContent.trim();
+      const tipo = tipoTexto?.startsWith('▶') ? 'video' : tipoTexto?.startsWith('🖼️') ? 'imagen' : 'texto';
+      const desc = document.getElementById('inp-el-desc')?.value.trim() || '';
+      const url = document.getElementById('inp-el-url')?.value.trim() || '';
+      const imgUrl = document.getElementById('inp-el-imgurl')?.value.trim() || '';
+      const sec = curso.secciones.find(s => s.id === modalEditSecId);
+      if (!sec) return;
+      const btn = document.getElementById('btn-save-el');
+      if (btn) { btn.disabled = true; btn.textContent = 'Guardando…'; }
+      try {
+        if (modalEditElId) {
+          const el = sec.elementos.find(e => e.id === modalEditElId);
+          if (el) Object.assign(el, { titulo, tipo, descripcion: desc, videoUrl: tipo === 'video' ? url : '', imagenUrl: tipo === 'imagen' ? imgUrl : '', enlaces: modalEnlaces });
+        } else {
+          sec.elementos = sec.elementos || [];
+          sec.elementos.push({ id: generarId('e'), titulo, tipo, descripcion: desc, videoUrl: tipo === 'video' ? url : '', imagenUrl: tipo === 'imagen' ? imgUrl : '', enlaces: modalEnlaces });
+        }
+        await guardarCurso(); cerrarModal(); mostrarToast(modalEditElId ? 'Elemento actualizado' : 'Elemento añadido', 'success');
+      } catch (_) { if (btn) { btn.disabled = false; btn.textContent = 'Guardar'; } }
+    }
+    async function eliminarElemento(secId, elId) {
+      if (!confirm('¿Eliminar este elemento?')) return;
+      const sec = curso.secciones.find(s => s.id === secId);
+      if (!sec) return;
+      sec.elementos = sec.elementos.filter(e => e.id !== elId);
+      await guardarCurso(); mostrarToast('Elemento eliminado');
+    }
 
-/* ================================================================
-   EXPORTAR / IMPORTAR
-================================================================ */
-function exportCourse() {
-  const blob = new Blob([JSON.stringify(curso, null, 2)], { type: 'application/json' });
-  const a = Object.assign(document.createElement('a'), { href: URL.createObjectURL(blob), download: 'curso-export.json' });
-  a.click(); URL.revokeObjectURL(a.href); mostrarToast('Curso exportado', 'success');
-}
-function importCoursePrompt() {
-  abrirModal(`
+    /* ================================================================
+       EXPORTAR / IMPORTAR
+    ================================================================ */
+    function exportCourse() {
+      const blob = new Blob([JSON.stringify(curso, null, 2)], { type: 'application/json' });
+      const a = Object.assign(document.createElement('a'), { href: URL.createObjectURL(blob), download: 'curso-export.json' });
+      a.click(); URL.revokeObjectURL(a.href); mostrarToast('Curso exportado', 'success');
+    }
+    function importCoursePrompt() {
+      abrirModal(`
     <h2 class="modal-title">⬆ Importar curso</h2>
     <p style="color:var(--text-muted);font-size:14px;margin-bottom:16px;">El curso actual será reemplazado para todos los visitantes.</p>
     <div class="file-input-wrap">
@@ -1295,230 +2670,230 @@ function importCoursePrompt() {
       <div class="file-input-label">📂 Seleccionar archivo .json</div>
     </div>
     <div class="modal-actions"><button class="btn btn-secondary" onclick="cerrarModal()">Cancelar</button></div>`);
-}
-async function onImportFile(event) {
-  const file = event.target.files[0];
-  if (!file) return;
-  try {
-    const data = JSON.parse(await file.text());
-    if (!data.titulo || !data.secciones) throw new Error('Formato no válido');
-    curso = data; await guardarCurso(); cerrarModal(); mostrarToast('Curso importado', 'success');
-  } catch (err) { mostrarToast('Error: ' + err.message, 'danger'); }
-}
+    }
+    async function onImportFile(event) {
+      const file = event.target.files[0];
+      if (!file) return;
+      try {
+        const data = JSON.parse(await file.text());
+        if (!data.titulo || !data.secciones) throw new Error('Formato no válido');
+        curso = data; await guardarCurso(); cerrarModal(); mostrarToast('Curso importado', 'success');
+      } catch (err) { mostrarToast('Error: ' + err.message, 'danger'); }
+    }
 
-/* ================================================================
-   PANEL ADMIN — USUARIOS
-================================================================ */
-function mostrarPanelUsuarios() {
-  document.getElementById('main-layout').style.display = 'none';
-  document.getElementById('panel-usuarios').classList.add('visible');
-  cargarDatosPanel();
-  // Refrescar cada 30s
-  panelIntervals.forEach(clearInterval);
-  panelIntervals = [setInterval(cargarDatosPanel, 30000)];
-}
+    /* ================================================================
+       PANEL ADMIN — USUARIOS
+    ================================================================ */
+    function mostrarPanelUsuarios() {
+      document.getElementById('main-layout').style.display = 'none';
+      document.getElementById('panel-usuarios').classList.add('visible');
+      cargarDatosPanel();
+      // Refrescar cada 30s
+      panelIntervals.forEach(clearInterval);
+      panelIntervals = [setInterval(cargarDatosPanel, 30000)];
+    }
 
-function ocultarPanelUsuarios() {
-  document.getElementById('panel-usuarios').classList.remove('visible');
-  document.getElementById('main-layout').style.display = '';
-  panelIntervals.forEach(clearInterval);
-  panelIntervals = [];
-}
+    function ocultarPanelUsuarios() {
+      document.getElementById('panel-usuarios').classList.remove('visible');
+      document.getElementById('main-layout').style.display = '';
+      panelIntervals.forEach(clearInterval);
+      panelIntervals = [];
+    }
 
-async function cargarDatosPanel() {
-  await Promise.all([cargarCodigos(), cargarSesiones(), cargarHistorial(), cargarProgresoUsuarios()]);
-  renderizarPanel();
-}
+    async function cargarDatosPanel() {
+      await Promise.all([cargarCodigos(), cargarSesiones(), cargarHistorial(), cargarProgresoUsuarios()]);
+      renderizarPanel();
+    }
 
-async function cargarCodigos() {
-  try {
-    const snap = await getDocs(collection(db, 'codigos'));
-    codigosData = snap.docs.map(d => ({ id: d.id, ...d.data() }));
-  } catch (_) {}
-}
+    async function cargarCodigos() {
+      try {
+        const snap = await getDocs(collection(db, 'codigos'));
+        codigosData = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+      } catch (_) { }
+    }
 
-async function cargarSesiones() {
-  try {
-    const snap = await getDocs(collection(db, 'sesiones'));
-    const ahora = Date.now();
-    sesionesData = snap.docs.map(d => ({ id: d.id, ...d.data() })).filter(s => {
-      const ua = s.ultimaActividad?.toDate?.()?.getTime() || 0;
-      return (ahora - ua) < 10 * 60 * 1000; // activos = últimos 10 min
-    });
-  } catch (_) {}
-}
+    async function cargarSesiones() {
+      try {
+        const snap = await getDocs(collection(db, 'sesiones'));
+        const ahora = Date.now();
+        sesionesData = snap.docs.map(d => ({ id: d.id, ...d.data() })).filter(s => {
+          const ua = s.ultimaActividad?.toDate?.()?.getTime() || 0;
+          return (ahora - ua) < 10 * 60 * 1000; // activos = últimos 10 min
+        });
+      } catch (_) { }
+    }
 
-async function cargarHistorial() {
-  try {
-    const q = query(collection(db, 'historial'), orderBy('ts', 'desc'), limit(200));
-    const snap = await getDocs(q);
-    historialData = snap.docs.map(d => ({ id: d.id, ...d.data() }));
-  } catch (_) {}
-}
+    async function cargarHistorial() {
+      try {
+        const q = query(collection(db, 'historial'), orderBy('ts', 'desc'), limit(200));
+        const snap = await getDocs(q);
+        historialData = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+      } catch (_) { }
+    }
 
-async function cargarProgresoUsuarios() {
-  try {
-    const snap = await getDocs(collection(db, 'progreso'));
-    progresoUsuarios = {};
-    snap.docs.forEach(d => { progresoUsuarios[d.id] = d.data(); });
-  } catch (_) {}
-}
+    async function cargarProgresoUsuarios() {
+      try {
+        const snap = await getDocs(collection(db, 'progreso'));
+        progresoUsuarios = {};
+        snap.docs.forEach(d => { progresoUsuarios[d.id] = d.data(); });
+      } catch (_) { }
+    }
 
-function renderizarPanel() {
-  renderizarStats();
-  renderizarTabActivos();
-  renderizarTabHistorial();
-  renderizarTabCodigos();
-  renderizarTabProgreso();
-  detectarMultiIP();
-}
+    function renderizarPanel() {
+      renderizarStats();
+      renderizarTabActivos();
+      renderizarTabHistorial();
+      renderizarTabCodigos();
+      renderizarTabProgreso();
+      detectarMultiIP();
+    }
 
-function renderizarStats() {
-  const totalCodigos = codigosData.length;
-  const activosAhora = sesionesData.length;
-  const bloqueados = codigosData.filter(c => c.bloqueado).length;
-  const multiIP = detectarCodigosMultiIP();
-  document.getElementById('stats-strip').innerHTML = `
+    function renderizarStats() {
+      const totalCodigos = codigosData.length;
+      const activosAhora = sesionesData.length;
+      const bloqueados = codigosData.filter(c => c.bloqueado).length;
+      const multiIP = detectarCodigosMultiIP();
+      document.getElementById('stats-strip').innerHTML = `
     <div class="stat-card"><div class="stat-num">${totalCodigos}</div><div class="stat-label">Códigos creados</div></div>
     <div class="stat-card"><div class="stat-num" style="color:var(--success)">${activosAhora}</div><div class="stat-label">Activos ahora</div></div>
     <div class="stat-card"><div class="stat-num" style="color:var(--danger)">${bloqueados}</div><div class="stat-label">Bloqueados</div></div>
     <div class="stat-card"><div class="stat-num" style="color:var(--warn)">${multiIP.length}</div><div class="stat-label">Alertas multi-IP</div></div>`;
-}
+    }
 
-function detectarCodigosMultiIP() {
-  const ipsPorCodigo = {};
-  historialData.forEach(h => {
-    if (!ipsPorCodigo[h.codigo]) ipsPorCodigo[h.codigo] = new Set();
-    if (h.ip && h.ip !== 'desconocida') ipsPorCodigo[h.codigo].add(h.ip);
-  });
-  return Object.entries(ipsPorCodigo).filter(([, ips]) => ips.size > 1).map(([cod]) => cod);
-}
+    function detectarCodigosMultiIP() {
+      const ipsPorCodigo = {};
+      historialData.forEach(h => {
+        if (!ipsPorCodigo[h.codigo]) ipsPorCodigo[h.codigo] = new Set();
+        if (h.ip && h.ip !== 'desconocida') ipsPorCodigo[h.codigo].add(h.ip);
+      });
+      return Object.entries(ipsPorCodigo).filter(([, ips]) => ips.size > 1).map(([cod]) => cod);
+    }
 
-function detectarMultiIP() {
-  const alertas = detectarCodigosMultiIP();
-  const banner = document.getElementById('alert-banner');
-  if (alertas.length > 0) {
-    document.getElementById('alert-banner-text').textContent =
-      `⚠️ Posible uso compartido detectado en ${alertas.length} código(s): ${alertas.join(', ')}. Revisa el historial.`;
-    banner.classList.add('visible');
-  } else {
-    banner.classList.remove('visible');
-  }
-}
+    function detectarMultiIP() {
+      const alertas = detectarCodigosMultiIP();
+      const banner = document.getElementById('alert-banner');
+      if (alertas.length > 0) {
+        document.getElementById('alert-banner-text').textContent =
+          `⚠️ Posible uso compartido detectado en ${alertas.length} código(s): ${alertas.join(', ')}. Revisa el historial.`;
+        banner.classList.add('visible');
+      } else {
+        banner.classList.remove('visible');
+      }
+    }
 
-function renderizarTabActivos() {
-  const tbody = document.getElementById('tbody-activos');
-  if (!tbody) return;
-  const multiIPCodigos = new Set(detectarCodigosMultiIP());
+    function renderizarTabActivos() {
+      const tbody = document.getElementById('tbody-activos');
+      if (!tbody) return;
+      const multiIPCodigos = new Set(detectarCodigosMultiIP());
 
-  if (sesionesData.length === 0) {
-    tbody.innerHTML = `<tr class="empty-row"><td colspan="6">Ningún usuario activo en este momento.</td></tr>`;
-    return;
-  }
+      if (sesionesData.length === 0) {
+        tbody.innerHTML = `<tr class="empty-row"><td colspan="6">Ningún usuario activo en este momento.</td></tr>`;
+        return;
+      }
 
-  tbody.innerHTML = sesionesData.map(s => {
-    const ua = s.ultimaActividad?.toDate?.() || new Date(0);
-    const hace = tiempoRelativo(ua);
-    const esMulti = multiIPCodigos.has(s.codigo);
-    const cod = codigosData.find(c => c.id === s.codigoId);
-    const bloqueado = cod?.bloqueado;
-    return `<tr class="${esMulti ? 'multi-ip-row' : ''}">
+      tbody.innerHTML = sesionesData.map(s => {
+        const ua = s.ultimaActividad?.toDate?.() || new Date(0);
+        const hace = tiempoRelativo(ua);
+        const esMulti = multiIPCodigos.has(s.codigo);
+        const cod = codigosData.find(c => c.id === s.codigoId);
+        const bloqueado = cod?.bloqueado;
+        return `<tr class="${esMulti ? 'multi-ip-row' : ''}">
       <td><span class="status-dot ${bloqueado ? 'dot-offline' : 'dot-online'}"></span>${escHtml(s.nombre)}</td>
       <td><span class="code-value">${escHtml(s.codigo)}</span></td>
       <td>${hace}</td>
-      <td style="font-family:monospace;font-size:12px;">${escHtml(s.ip||'—')}</td>
+      <td style="font-family:monospace;font-size:12px;">${escHtml(s.ip || '—')}</td>
       <td>
         ${esMulti ? '<span class="badge-pill badge-warn">⚠️ Multi-IP</span>' : ''}
         ${bloqueado ? '<span class="badge-pill badge-blocked">Bloqueado</span>' : '<span class="badge-pill badge-active">Activo</span>'}
       </td>
       <td>
         ${bloqueado
-          ? `<button class="btn btn-success btn-sm" onclick="toggleBloqueo('${s.codigoId}', false)">✓ Activar</button>`
-          : `<button class="btn btn-danger btn-sm" onclick="toggleBloqueo('${s.codigoId}', true)">⊘ Bloquear</button>`
-        }
+            ? `<button class="btn btn-success btn-sm" onclick="toggleBloqueo('${s.codigoId}', false)">✓ Activar</button>`
+            : `<button class="btn btn-danger btn-sm" onclick="toggleBloqueo('${s.codigoId}', true)">⊘ Bloquear</button>`
+          }
       </td>
     </tr>`;
-  }).join('');
-}
+      }).join('');
+    }
 
-function renderizarTabHistorial() {
-  const lista = document.getElementById('historial-list');
-  if (!lista) return;
-  const multiIPCodigos = new Set(detectarCodigosMultiIP());
+    function renderizarTabHistorial() {
+      const lista = document.getElementById('historial-list');
+      if (!lista) return;
+      const multiIPCodigos = new Set(detectarCodigosMultiIP());
 
-  if (historialData.length === 0) {
-    lista.innerHTML = '<p style="color:var(--text-muted);text-align:center;padding:32px;">Sin historial todavía.</p>';
-    return;
-  }
+      if (historialData.length === 0) {
+        lista.innerHTML = '<p style="color:var(--text-muted);text-align:center;padding:32px;">Sin historial todavía.</p>';
+        return;
+      }
 
-  lista.innerHTML = historialData.slice(0, 100).map(h => {
-    const ts = h.ts?.toDate?.() || new Date();
-    const esMulti = multiIPCodigos.has(h.codigo);
-    const icono = h.tipo === 'login' ? '🔑' : '💾';
-    return `<div class="history-item ${esMulti ? 'history-warn' : ''}">
+      lista.innerHTML = historialData.slice(0, 100).map(h => {
+        const ts = h.ts?.toDate?.() || new Date();
+        const esMulti = multiIPCodigos.has(h.codigo);
+        const icono = h.tipo === 'login' ? '🔑' : '💾';
+        return `<div class="history-item ${esMulti ? 'history-warn' : ''}">
       <span class="history-icon">${esMulti ? '⚠️' : icono}</span>
       <div class="history-info">
         <div class="history-user">${escHtml(h.nombre)} <span style="font-weight:400;color:var(--text-muted);">— <code>${escHtml(h.codigo)}</code></span></div>
-        <div class="history-detail">IP: ${escHtml(h.ip||'desconocida')} · ${h.tipo === 'login' ? 'Inicio de sesión' : 'Actividad'}${esMulti?' · <strong>¡IPs múltiples!</strong>':''}</div>
+        <div class="history-detail">IP: ${escHtml(h.ip || 'desconocida')} · ${h.tipo === 'login' ? 'Inicio de sesión' : 'Actividad'}${esMulti ? ' · <strong>¡IPs múltiples!</strong>' : ''}</div>
       </div>
       <span class="history-time">${formatearFecha(ts)}</span>
     </div>`;
-  }).join('');
-}
+      }).join('');
+    }
 
-function renderizarTabCodigos() {
-  const lista = document.getElementById('codigos-list');
-  if (!lista) return;
-  const multiIPCodigos = new Set(detectarCodigosMultiIP());
-  const ipsPorCodigo = {};
-  historialData.forEach(h => {
-    if (!ipsPorCodigo[h.codigo]) ipsPorCodigo[h.codigo] = new Set();
-    if (h.ip && h.ip !== 'desconocida') ipsPorCodigo[h.codigo].add(h.ip);
-  });
+    function renderizarTabCodigos() {
+      const lista = document.getElementById('codigos-list');
+      if (!lista) return;
+      const multiIPCodigos = new Set(detectarCodigosMultiIP());
+      const ipsPorCodigo = {};
+      historialData.forEach(h => {
+        if (!ipsPorCodigo[h.codigo]) ipsPorCodigo[h.codigo] = new Set();
+        if (h.ip && h.ip !== 'desconocida') ipsPorCodigo[h.codigo].add(h.ip);
+      });
 
-  if (codigosData.length === 0) {
-    lista.innerHTML = '<div class="empty-state"><div class="es-icon">🔑</div><p>Aún no has creado ningún código. Pulsa "+ Nuevo código".</p></div>';
-    return;
-  }
+      if (codigosData.length === 0) {
+        lista.innerHTML = '<div class="empty-state"><div class="es-icon">🔑</div><p>Aún no has creado ningún código. Pulsa "+ Nuevo código".</p></div>';
+        return;
+      }
 
-  lista.innerHTML = codigosData.map(c => {
-    const esMulti = multiIPCodigos.has(c.codigo);
-    const ips = ipsPorCodigo[c.codigo] ? [...ipsPorCodigo[c.codigo]].join(', ') : '—';
-    return `<div class="code-row">
+      lista.innerHTML = codigosData.map(c => {
+        const esMulti = multiIPCodigos.has(c.codigo);
+        const ips = ipsPorCodigo[c.codigo] ? [...ipsPorCodigo[c.codigo]].join(', ') : '—';
+        return `<div class="code-row">
       <span class="code-value">${escHtml(c.codigo)}</span>
-      <span class="code-name">${escHtml(c.nombre||'Sin nombre')}</span>
+      <span class="code-name">${escHtml(c.nombre || 'Sin nombre')}</span>
       <span class="code-meta">${ips !== '—' ? '🌐 ' + ips : 'Sin accesos'}</span>
       ${esMulti ? '<span class="badge-pill badge-warn">⚠️ Multi-IP</span>' : ''}
       ${c.bloqueado ? '<span class="badge-pill badge-blocked">Bloqueado</span>' : '<span class="badge-pill badge-active">Activo</span>'}
       <div style="display:flex;gap:6px;margin-left:auto;">
         ${c.bloqueado
-          ? `<button class="btn btn-success btn-sm" onclick="toggleBloqueo('${c.id}', false)">✓ Activar</button>`
-          : `<button class="btn btn-danger btn-sm" onclick="toggleBloqueo('${c.id}', true)">⊘ Bloquear</button>`
-        }
+            ? `<button class="btn btn-success btn-sm" onclick="toggleBloqueo('${c.id}', false)">✓ Activar</button>`
+            : `<button class="btn btn-danger btn-sm" onclick="toggleBloqueo('${c.id}', true)">⊘ Bloquear</button>`
+          }
         <button class="btn btn-secondary btn-sm" onclick="eliminarCodigo('${c.id}')">🗑️</button>
       </div>
     </div>`;
-  }).join('');
-}
+      }).join('');
+    }
 
-function renderizarTabProgreso() {
-  const tbody = document.getElementById('tbody-progreso');
-  if (!tbody) return;
-  const totalItems = (curso?.secciones||[]).reduce((a, sec) => a + (sec.elementos?.length||0), 0);
+    function renderizarTabProgreso() {
+      const tbody = document.getElementById('tbody-progreso');
+      if (!tbody) return;
+      const totalItems = (curso?.secciones || []).reduce((a, sec) => a + (sec.elementos?.length || 0), 0);
 
-  const filas = Object.values(progresoUsuarios);
-  if (filas.length === 0) {
-    tbody.innerHTML = `<tr class="empty-row"><td colspan="5">Sin datos de progreso todavía.</td></tr>`;
-    return;
-  }
+      const filas = Object.values(progresoUsuarios);
+      if (filas.length === 0) {
+        tbody.innerHTML = `<tr class="empty-row"><td colspan="5">Sin datos de progreso todavía.</td></tr>`;
+        return;
+      }
 
-  tbody.innerHTML = filas.map(p => {
-    const completados = Object.values(p.items||{}).filter(v=>v).length;
-    const pct = totalItems ? Math.round((completados/totalItems)*100) : 0;
-    const ua = p.ultimaActividad?.toDate?.() || new Date(0);
-    return `<tr>
-      <td>${escHtml(p.nombre||'—')}</td>
-      <td><span class="code-value">${escHtml(p.codigo||'—')}</span></td>
+      tbody.innerHTML = filas.map(p => {
+        const completados = Object.values(p.items || {}).filter(v => v).length;
+        const pct = totalItems ? Math.round((completados / totalItems) * 100) : 0;
+        const ua = p.ultimaActividad?.toDate?.() || new Date(0);
+        return `<tr>
+      <td>${escHtml(p.nombre || '—')}</td>
+      <td><span class="code-value">${escHtml(p.codigo || '—')}</span></td>
       <td>
         <div class="progress-mini-bar"><div class="progress-mini-fill" style="width:${pct}%"></div></div>
         ${pct}%
@@ -1526,14 +2901,14 @@ function renderizarTabProgreso() {
       <td>${completados} / ${totalItems}</td>
       <td style="font-size:12px;color:var(--text-muted);">${formatearFecha(ua)}</td>
     </tr>`;
-  }).join('');
-}
+      }).join('');
+    }
 
-/* ================================================================
-   GESTIÓN DE CÓDIGOS
-================================================================ */
-function openAddCodeModal() {
-  abrirModal(`
+    /* ================================================================
+       GESTIÓN DE CÓDIGOS
+    ================================================================ */
+    function openAddCodeModal() {
+      abrirModal(`
     <h2 class="modal-title">🔑 Nuevo código de acceso</h2>
     <div class="form-group">
       <label>Nombre del alumno</label>
@@ -1550,217 +2925,218 @@ function openAddCodeModal() {
       <button class="btn btn-secondary" onclick="cerrarModal()">Cancelar</button>
       <button class="btn btn-primary" onclick="crearCodigo()">Crear código</button>
     </div>`);
-}
+    }
 
-function generarCodigoAleatorio() {
-  const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
-  let cod = '';
-  for (let i = 0; i < 8; i++) cod += chars[Math.floor(Math.random() * chars.length)];
-  const inp = document.getElementById('inp-cod-valor');
-  if (inp) inp.value = cod;
-}
+    function generarCodigoAleatorio() {
+      const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
+      let cod = '';
+      for (let i = 0; i < 8; i++) cod += chars[Math.floor(Math.random() * chars.length)];
+      const inp = document.getElementById('inp-cod-valor');
+      if (inp) inp.value = cod;
+    }
 
-async function crearCodigo() {
-  const nombre = document.getElementById('inp-cod-nombre')?.value.trim();
-  const codigo = document.getElementById('inp-cod-valor')?.value.trim().toUpperCase();
-  if (!nombre) { mostrarToast('Escribe el nombre del alumno', 'danger'); return; }
-  if (!codigo || codigo.length < 4) { mostrarToast('El código debe tener al menos 4 caracteres', 'danger'); return; }
+    async function crearCodigo() {
+      const nombre = document.getElementById('inp-cod-nombre')?.value.trim();
+      const codigo = document.getElementById('inp-cod-valor')?.value.trim().toUpperCase();
+      if (!nombre) { mostrarToast('Escribe el nombre del alumno', 'danger'); return; }
+      if (!codigo || codigo.length < 4) { mostrarToast('El código debe tener al menos 4 caracteres', 'danger'); return; }
 
-  // Verificar que no exista
-  const existe = codigosData.some(c => c.codigo === codigo);
-  if (existe) { mostrarToast('Ese código ya existe', 'danger'); return; }
+      // Verificar que no exista
+      const existe = codigosData.some(c => c.codigo === codigo);
+      if (existe) { mostrarToast('Ese código ya existe', 'danger'); return; }
 
-  try {
-    await addDoc(collection(db, 'codigos'), { nombre, codigo, bloqueado: false, creadoEn: serverTimestamp() });
-    await cargarCodigos();
-    renderizarTabCodigos();
-    cerrarModal();
-    mostrarToast('Código creado: ' + codigo, 'success');
-  } catch (err) { mostrarToast('Error: ' + err.message, 'danger'); }
-}
+      try {
+        await addDoc(collection(db, 'codigos'), { nombre, codigo, bloqueado: false, creadoEn: serverTimestamp() });
+        await cargarCodigos();
+        renderizarTabCodigos();
+        cerrarModal();
+        mostrarToast('Código creado: ' + codigo, 'success');
+      } catch (err) { mostrarToast('Error: ' + err.message, 'danger'); }
+    }
 
-async function toggleBloqueo(codigoId, bloquear) {
-  const accion = bloquear ? 'bloquear' : 'activar';
-  if (!confirm(`¿${accion.charAt(0).toUpperCase()+accion.slice(1)} este código?`)) return;
-  try {
-    await updateDoc(doc(db, 'codigos', codigoId), { bloqueado: bloquear });
-    await cargarCodigos();
-    await cargarSesiones();
-    renderizarPanel();
-    mostrarToast(bloquear ? 'Código bloqueado' : 'Código activado', bloquear ? 'danger' : 'success');
-  } catch (err) { mostrarToast('Error: ' + err.message, 'danger'); }
-}
+    async function toggleBloqueo(codigoId, bloquear) {
+      const accion = bloquear ? 'bloquear' : 'activar';
+      if (!confirm(`¿${accion.charAt(0).toUpperCase() + accion.slice(1)} este código?`)) return;
+      try {
+        await updateDoc(doc(db, 'codigos', codigoId), { bloqueado: bloquear });
+        await cargarCodigos();
+        await cargarSesiones();
+        renderizarPanel();
+        mostrarToast(bloquear ? 'Código bloqueado' : 'Código activado', bloquear ? 'danger' : 'success');
+      } catch (err) { mostrarToast('Error: ' + err.message, 'danger'); }
+    }
 
-async function eliminarCodigo(codigoId) {
-  if (!confirm('¿Eliminar este código permanentemente?')) return;
-  try {
-    const { deleteDoc } = await import('https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js');
-    await deleteDoc(doc(db, 'codigos', codigoId));
-    await cargarCodigos();
-    renderizarTabCodigos();
-    mostrarToast('Código eliminado');
-  } catch (err) { mostrarToast('Error: ' + err.message, 'danger'); }
-}
+    async function eliminarCodigo(codigoId) {
+      if (!confirm('¿Eliminar este código permanentemente?')) return;
+      try {
+        const { deleteDoc } = await import('https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js');
+        await deleteDoc(doc(db, 'codigos', codigoId));
+        await cargarCodigos();
+        renderizarTabCodigos();
+        mostrarToast('Código eliminado');
+      } catch (err) { mostrarToast('Error: ' + err.message, 'danger'); }
+    }
 
-/* ================================================================
-   TABS PANEL
-================================================================ */
-function cambiarTab(tabId) {
-  document.querySelectorAll('.panel-section').forEach(s => s.classList.remove('visible'));
-  document.querySelectorAll('.panel-tab').forEach(t => t.classList.remove('active'));
-  document.getElementById(tabId)?.classList.add('visible');
-  const idx = ['tab-activos','tab-historial','tab-codigos','tab-progreso'].indexOf(tabId);
-  document.querySelectorAll('.panel-tab')[idx]?.classList.add('active');
-}
+    /* ================================================================
+       TABS PANEL
+    ================================================================ */
+    function cambiarTab(tabId) {
+      document.querySelectorAll('.panel-section').forEach(s => s.classList.remove('visible'));
+      document.querySelectorAll('.panel-tab').forEach(t => t.classList.remove('active'));
+      document.getElementById(tabId)?.classList.add('visible');
+      const idx = ['tab-activos', 'tab-historial', 'tab-codigos', 'tab-progreso'].indexOf(tabId);
+      document.querySelectorAll('.panel-tab')[idx]?.classList.add('active');
+    }
 
-/* ================================================================
-   MODAL GENÉRICO
-================================================================ */
-function abrirModal(html) {
-  cerrarModal();
-  const overlay = document.createElement('div');
-  overlay.className = 'modal-overlay';
-  overlay.id = 'modal-overlay';
-  overlay.innerHTML = `<div class="modal">${html}</div>`;
-  overlay.addEventListener('click', e => { if (e.target === overlay) cerrarModal(); });
-  overlay._escHandler = e => { if (e.key === 'Escape') cerrarModal(); };
-  document.addEventListener('keydown', overlay._escHandler);
-  document.body.appendChild(overlay);
-  setTimeout(() => { overlay.querySelector('input[autofocus]')?.focus(); }, 50);
-}
-function cerrarModal() {
-  const o = document.getElementById('modal-overlay');
-  if (o) { if (o._escHandler) document.removeEventListener('keydown', o._escHandler); o.remove(); }
-}
+    /* ================================================================
+       MODAL GENÉRICO
+    ================================================================ */
+    function abrirModal(html) {
+      cerrarModal();
+      const overlay = document.createElement('div');
+      overlay.className = 'modal-overlay';
+      overlay.id = 'modal-overlay';
+      overlay.innerHTML = `<div class="modal" role="dialog" aria-modal="true">${html}</div>`;
+      overlay.addEventListener('click', e => { if (e.target === overlay) cerrarModal(); });
+      overlay._escHandler = e => { if (e.key === 'Escape') cerrarModal(); };
+      document.addEventListener('keydown', overlay._escHandler);
+      document.body.appendChild(overlay);
+      setTimeout(() => { overlay.querySelector('input[autofocus]')?.focus(); }, 50);
+    }
+    function cerrarModal() {
+      const o = document.getElementById('modal-overlay');
+      if (o) { if (o._escHandler) document.removeEventListener('keydown', o._escHandler); o.remove(); }
+    }
 
-/* ================================================================
-   TOAST
-================================================================ */
-function mostrarToast(msg, tipo = '') {
-  const c = document.getElementById('toast-container');
-  const t = document.createElement('div');
-  t.className = 'toast ' + tipo;
-  t.textContent = msg;
-  c.appendChild(t);
-  setTimeout(() => t.remove(), 3200);
-}
+    /* ================================================================
+       TOAST
+    ================================================================ */
+    function mostrarToast(msg, tipo = '') {
+      const c = document.getElementById('toast-container');
+      const t = document.createElement('div');
+      t.className = 'toast ' + tipo;
+      t.textContent = msg;
+      c.appendChild(t);
+      setTimeout(() => t.remove(), 3200);
+    }
 
-/* ================================================================
-   HELPERS
-================================================================ */
-function setLoaderMsg(msg) { document.getElementById('loader-msg').textContent = msg; }
-function ocultarLoader() { document.getElementById('loader').style.display = 'none'; }
-function mostrarError(msg) { const el = document.getElementById('error-msg'); el.innerHTML = msg; el.style.display = 'block'; }
+    /* ================================================================
+       HELPERS
+    ================================================================ */
+    function setLoaderMsg(msg) { document.getElementById('loader-msg').textContent = msg; }
+    function ocultarLoader() { document.getElementById('loader').style.display = 'none'; }
+    function mostrarError(msg) { const el = document.getElementById('error-msg'); el.innerHTML = msg; el.style.display = 'block'; }
 
-function escHtml(str) {
-  return String(str||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;');
-}
-function generarId(p='id') { return p+'_'+Math.random().toString(36).slice(2,9)+Date.now().toString(36); }
+    function escHtml(str) {
+      return String(str || '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&#39;');
+    }
+    function generarId(p = 'id') { return p + '_' + Math.random().toString(36).slice(2, 9) + Date.now().toString(36); }
 
-function tiempoRelativo(fecha) {
-  const diff = Date.now() - fecha.getTime();
-  if (diff < 60000) return 'Ahora mismo';
-  if (diff < 3600000) return Math.floor(diff/60000) + ' min';
-  if (diff < 86400000) return Math.floor(diff/3600000) + ' h';
-  return Math.floor(diff/86400000) + ' d';
-}
+    function tiempoRelativo(fecha) {
+      const diff = Date.now() - fecha.getTime();
+      if (diff < 60000) return 'Ahora mismo';
+      if (diff < 3600000) return Math.floor(diff / 60000) + ' min';
+      if (diff < 86400000) return Math.floor(diff / 3600000) + ' h';
+      return Math.floor(diff / 86400000) + ' d';
+    }
 
-function formatearFecha(fecha) {
-  if (!fecha || fecha.getTime() === 0) return '—';
-  return fecha.toLocaleDateString('es-ES', { day:'2-digit', month:'2-digit', year:'numeric', hour:'2-digit', minute:'2-digit' });
-}
+    function formatearFecha(fecha) {
+      if (!fecha || fecha.getTime() === 0) return '—';
+      return fecha.toLocaleDateString('es-ES', { day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit' });
+    }
 
-function generarIframeUrl(url) {
-  if (!url) return null;
-  let m;
-  if ((m=url.match(/(?:youtube\.com\/watch\?v=|youtu\.be\/)([\w-]{11})/))) return `https://www.youtube-nocookie.com/embed/${m[1]}`;
-  if ((m=url.match(/youtube\.com\/embed\/([\w-]{11})/))) return `https://www.youtube-nocookie.com/embed/${m[1]}`;
-  if ((m=url.match(/vimeo\.com\/(\d+)/))) return `https://player.vimeo.com/video/${m[1]}`;
-  if ((m=url.match(/loom\.com\/share\/([\w]+)/))) return `https://www.loom.com/embed/${m[1]}`;
-  if ((m=url.match(/drive\.google\.com\/file\/d\/([\w-]+)/))) return `https://drive.google.com/file/d/${m[1]}/preview`;
-  if (url.startsWith('https://')) return url;
-  return null;
-}
+    function generarIframeUrl(url) {
+      if (!url) return null;
+      let m;
+      if ((m = url.match(/(?:youtube\.com\/watch\?v=|youtu\.be\/)([\w-]{11})/))) return `https://www.youtube-nocookie.com/embed/${m[1]}`;
+      if ((m = url.match(/youtube\.com\/embed\/([\w-]{11})/))) return `https://www.youtube-nocookie.com/embed/${m[1]}`;
+      if ((m = url.match(/vimeo\.com\/(\d+)/))) return `https://player.vimeo.com/video/${m[1]}`;
+      if ((m = url.match(/loom\.com\/share\/([\w]+)/))) return `https://www.loom.com/embed/${m[1]}`;
+      if ((m = url.match(/drive\.google\.com\/file\/d\/([\w-]+)/))) return `https://drive.google.com/file/d/${m[1]}/preview`;
+      if (url.startsWith('https://')) return url;
+      return null;
+    }
 
-/* ================================================================
-   EXPONER GLOBALS
-================================================================ */
-function toggleAdminForm() {
-  const form = document.getElementById('admin-inline-form');
-  const btn = document.getElementById('btn-toggle-admin');
-  if (!form) return;
-  const visible = form.style.display !== 'none';
-  form.style.display = visible ? 'none' : 'block';
-  btn.textContent = visible ? 'Acceso administrador' : 'Cancelar';
-  if (!visible) setTimeout(() => document.getElementById('inp-admin-email')?.focus(), 50);
-}
+    /* ================================================================
+       EXPONER GLOBALS
+    ================================================================ */
+    function toggleAdminForm() {
+      const form = document.getElementById('admin-inline-form');
+      const btn = document.getElementById('btn-toggle-admin');
+      if (!form) return;
+      const visible = form.style.display !== 'none';
+      form.style.display = visible ? 'none' : 'block';
+      btn.textContent = visible ? 'Acceso administrador' : 'Cancelar';
+      if (!visible) setTimeout(() => document.getElementById('inp-admin-email')?.focus(), 50);
+    }
 
-async function loginAdminInline() {
-  const email = document.getElementById('inp-admin-email')?.value.trim();
-  const pass = document.getElementById('inp-admin-pass')?.value;
-  const errEl = document.getElementById('admin-login-error');
-  const btn = document.getElementById('btn-admin-login-inline');
-  if (errEl) errEl.style.display = 'none';
-  if (!email || !pass) {
-    if (errEl) { errEl.textContent = 'Completa email y contraseña.'; errEl.style.display = 'block'; }
-    return;
-  }
-  if (!auth) {
-    if (errEl) { errEl.textContent = 'Espera, conectando con Firebase…'; errEl.style.display = 'block'; }
-    return;
-  }
-  btn.disabled = true; btn.textContent = 'Verificando…';
-  try {
-    await signInWithEmailAndPassword(auth, email, pass);
-    adminMode = true;
-    document.getElementById('access-screen').classList.remove('visible');
-    if (!curso) await cargarCurso();
-    mostrarApp();
-    renderizarCurso();
-    mostrarToast('Modo administrador activado', 'success');
-  } catch (err) {
-    btn.disabled = false; btn.textContent = 'Entrar como administrador';
-    if (errEl) { errEl.textContent = 'Email o contraseña incorrectos.'; errEl.style.display = 'block'; }
-  }
-}
+    async function loginAdminInline() {
+      const email = document.getElementById('inp-admin-email')?.value.trim();
+      const pass = document.getElementById('inp-admin-pass')?.value;
+      const errEl = document.getElementById('admin-login-error');
+      const btn = document.getElementById('btn-admin-login-inline');
+      if (errEl) errEl.style.display = 'none';
+      if (!email || !pass) {
+        if (errEl) { errEl.textContent = 'Completa email y contraseña.'; errEl.style.display = 'block'; }
+        return;
+      }
+      if (!auth) {
+        if (errEl) { errEl.textContent = 'Espera, conectando con Firebase…'; errEl.style.display = 'block'; }
+        return;
+      }
+      btn.disabled = true; btn.textContent = 'Verificando…';
+      try {
+        await signInWithEmailAndPassword(auth, email, pass);
+        adminMode = true;
+        document.getElementById('access-screen').classList.remove('visible');
+        if (!curso) await cargarCurso();
+        mostrarApp();
+        renderizarCurso();
+        mostrarToast('Modo administrador activado', 'success');
+      } catch (err) {
+        btn.disabled = false; btn.textContent = 'Entrar como administrador';
+        if (errEl) { errEl.textContent = 'Email o contraseña incorrectos.'; errEl.style.display = 'block'; }
+      }
+    }
 
-window.mostrarLoginAdmin = mostrarLoginAdmin;
-window.cerrarModal = cerrarModal;
-window.loginAdmin = loginAdmin;
-window.logoutAdmin = logoutAdmin;
-window.toggleAdminForm = toggleAdminForm;
-window.loginAdminInline = loginAdminInline;
-window.logoutUser = logoutUser;
-window.intentarAcceso = intentarAcceso;
-window.editCourseInfo = editCourseInfo;
-window.guardarInfoCurso = guardarInfoCurso;
-window.openAddSectionModal = openAddSectionModal;
-window.guardarNuevaSeccion = guardarNuevaSeccion;
-window.guardarEdicionSeccion = guardarEdicionSeccion;
-window.seleccionarTipo = seleccionarTipo;
-window.onAddLink = onAddLink;
-window.quitarEnlaceModal = quitarEnlaceModal;
-window.guardarElemento = guardarElemento;
-window.exportCourse = exportCourse;
-window.importCoursePrompt = importCoursePrompt;
-window.onImportFile = onImportFile;
-window.resetProgreso = resetProgreso;
-window.mostrarPanelUsuarios = mostrarPanelUsuarios;
-window.ocultarPanelUsuarios = ocultarPanelUsuarios;
-window.cambiarTab = cambiarTab;
-window.openAddCodeModal = openAddCodeModal;
-window.generarCodigoAleatorio = generarCodigoAleatorio;
-window.crearCodigo = crearCodigo;
-window.toggleBloqueo = toggleBloqueo;
-window.eliminarCodigo = eliminarCodigo;
+    window.mostrarLoginAdmin = mostrarLoginAdmin;
+    window.cerrarModal = cerrarModal;
+    window.loginAdmin = loginAdmin;
+    window.logoutAdmin = logoutAdmin;
+    window.toggleAdminForm = toggleAdminForm;
+    window.loginAdminInline = loginAdminInline;
+    window.logoutUser = logoutUser;
+    window.intentarAcceso = intentarAcceso;
+    window.editCourseInfo = editCourseInfo;
+    window.guardarInfoCurso = guardarInfoCurso;
+    window.openAddSectionModal = openAddSectionModal;
+    window.guardarNuevaSeccion = guardarNuevaSeccion;
+    window.guardarEdicionSeccion = guardarEdicionSeccion;
+    window.seleccionarTipo = seleccionarTipo;
+    window.onAddLink = onAddLink;
+    window.quitarEnlaceModal = quitarEnlaceModal;
+    window.guardarElemento = guardarElemento;
+    window.exportCourse = exportCourse;
+    window.importCoursePrompt = importCoursePrompt;
+    window.onImportFile = onImportFile;
+    window.resetProgreso = resetProgreso;
+    window.mostrarPanelUsuarios = mostrarPanelUsuarios;
+    window.ocultarPanelUsuarios = ocultarPanelUsuarios;
+    window.cambiarTab = cambiarTab;
+    window.openAddCodeModal = openAddCodeModal;
+    window.generarCodigoAleatorio = generarCodigoAleatorio;
+    window.crearCodigo = crearCodigo;
+    window.toggleBloqueo = toggleBloqueo;
+    window.eliminarCodigo = eliminarCodigo;
 
-/* ================================================================
-   ARRANQUE
-================================================================ */
-document.addEventListener('DOMContentLoaded', () => {
-  setupLogoTripleClick();
-  init();
-});
-</script>
+    /* ================================================================
+       ARRANQUE
+    ================================================================ */
+    document.addEventListener('DOMContentLoaded', () => {
+      setupLogoTripleClick();
+      init();
+    });
+  </script>
 </body>
+
 </html>
