@@ -1920,6 +1920,7 @@
     // Drag & drop
     let dragSrcSeccion = null, dragSrcElement = null, dragSrcSectionId = null;
     let modalEnlaces = [], modalEditSecId = null, modalEditElId = null;
+    let modalEditParentSecId = null, modalEditIsSubseccion = false;
     let logoClickCount = 0, logoClickTimer = null;
 
     // Panel datos
@@ -2255,8 +2256,12 @@
        SECCIÓN CARD
     ================================================================ */
     function crearTarjetaSeccion(sec) {
-      const total = sec.elementos?.length || 0;
-      const completados = (sec.elementos || []).filter(e => progreso[e.id]).length;
+      let total = sec.elementos?.length || 0;
+      let completados = (sec.elementos || []).filter(e => progreso[e.id]).length;
+      (sec.subsecciones || []).forEach(sub => {
+        total += sub.elementos?.length || 0;
+        completados += (sub.elementos || []).filter(e => progreso[e.id]).length;
+      });
       const card = document.createElement('div');
       card.className = 'section-card' + (sec.colapsada ? ' collapsed' : '');
       card.dataset.id = sec.id;
@@ -2273,7 +2278,11 @@
     </div>
     <div class="section-body">
       <div class="items-list" id="items-${sec.id}"></div>
-      <button class="btn-add-item">＋ Añadir elemento</button>
+      <div class="subsecciones-list" id="subsecciones-${sec.id}"></div>
+      <div class="section-admin-actions">
+        <button class="btn-add-item">＋ Añadir elemento</button>
+        <button class="btn-add-subseccion">＋ Añadir subsección</button>
+      </div>
     </div>`;
 
       const header = card.querySelector('.section-header');
@@ -2287,6 +2296,7 @@
       adminBtns.children[0].addEventListener('click', () => editarSeccion(sec.id));
       adminBtns.children[1].addEventListener('click', () => eliminarSeccion(sec.id));
       card.querySelector('.btn-add-item').addEventListener('click', () => openAddItemModal(sec.id));
+      card.querySelector('.btn-add-subseccion').addEventListener('click', () => openAddSubseccionModal(sec.id));
 
       const handle = card.querySelector('.drag-handle');
       handle.addEventListener('dragstart', e => { dragSrcSeccion = card; e.dataTransfer.effectAllowed = 'move'; setTimeout(() => card.classList.add('dragging'), 0); });
@@ -2305,7 +2315,52 @@
       });
 
       (sec.elementos || []).forEach(el => card.querySelector(`#items-${sec.id}`).appendChild(crearTarjetaElemento(el, sec.id)));
+
+      // Renderizar subsecciones
+      const subsLista = card.querySelector(`#subsecciones-${sec.id}`);
+      (sec.subsecciones || []).forEach(sub => subsLista.appendChild(crearTarjetaSubseccion(sub, sec.id)));
+
       return card;
+    }
+
+    /* ================================================================
+       SUBSECCIÓN CARD
+    ================================================================ */
+    function crearTarjetaSubseccion(sub, secId) {
+      const total = sub.elementos?.length || 0;
+      const completados = (sub.elementos || []).filter(e => progreso[e.id]).length;
+      const wrap = document.createElement('div');
+      wrap.className = 'subseccion-card' + (sub.colapsada ? ' collapsed' : '');
+      wrap.dataset.id = sub.id;
+      wrap.innerHTML = `
+    <div class="subseccion-header">
+      <span class="section-chevron">▾</span>
+      <span class="subseccion-title-text">${escHtml(sub.titulo)}</span>
+      <span class="section-progress-mini">${completados}/${total}</span>
+      <div class="section-admin-btns">
+        <button class="btn btn-secondary btn-icon btn-sm">✏️</button>
+        <button class="btn btn-danger btn-icon btn-sm">🗑️</button>
+      </div>
+    </div>
+    <div class="subseccion-body">
+      <div class="items-list" id="items-${sub.id}"></div>
+      <button class="btn-add-item-sub">＋ Añadir elemento</button>
+    </div>`;
+
+      const hdr = wrap.querySelector('.subseccion-header');
+      const adminBtns = wrap.querySelector('.section-admin-btns');
+      hdr.addEventListener('click', e => {
+        if (adminBtns.contains(e.target)) return;
+        sub.colapsada = !sub.colapsada;
+        wrap.classList.toggle('collapsed', sub.colapsada);
+        if (adminMode) guardarCurso();
+      });
+      adminBtns.children[0].addEventListener('click', () => editarSubseccion(secId, sub.id));
+      adminBtns.children[1].addEventListener('click', () => eliminarSubseccion(secId, sub.id));
+      wrap.querySelector('.btn-add-item-sub').addEventListener('click', () => openAddItemModal(sub.id, secId, true));
+
+      (sub.elementos || []).forEach(el => wrap.querySelector(`#items-${sub.id}`).appendChild(crearTarjetaElemento(el, sub.id)));
+      return wrap;
     }
 
     /* ================================================================
@@ -2397,7 +2452,10 @@
     ================================================================ */
     function actualizarProgreso() {
       let total = 0, completados = 0;
-      (curso?.secciones || []).forEach(sec => (sec.elementos || []).forEach(el => { total++; if (progreso[el.id]) completados++; }));
+      (curso?.secciones || []).forEach(sec => {
+        (sec.elementos || []).forEach(el => { total++; if (progreso[el.id]) completados++; });
+        (sec.subsecciones || []).forEach(sub => (sub.elementos || []).forEach(el => { total++; if (progreso[el.id]) completados++; }));
+      });
       const pct = total ? Math.round((completados / total) * 100) : 0;
       document.getElementById('progress-bar-inner').style.width = pct + '%';
       document.getElementById('progress-pct').textContent = pct + '%';
@@ -2407,8 +2465,12 @@
 
     function renderizarContadoresSecciones() {
       (curso?.secciones || []).forEach(sec => {
-        const total = sec.elementos?.length || 0;
-        const comp = (sec.elementos || []).filter(e => progreso[e.id]).length;
+        let total = sec.elementos?.length || 0;
+        let comp = (sec.elementos || []).filter(e => progreso[e.id]).length;
+        (sec.subsecciones || []).forEach(sub => {
+          total += sub.elementos?.length || 0;
+          comp += (sub.elementos || []).filter(e => progreso[e.id]).length;
+        });
         const mini = document.querySelector(`.section-card[data-id="${sec.id}"] .section-progress-mini`);
         if (mini) mini.textContent = `${comp}/${total}`;
       });
@@ -2548,12 +2610,32 @@
       await guardarCurso(); mostrarToast('Sección eliminada');
     }
 
-    function openAddItemModal(secId) { modalEditSecId = secId; modalEditElId = null; modalEnlaces = []; abrirModal(htmlModalElemento(null)); renderizarEnlacesModal(); }
-    function editarElemento(secId, elId) {
-      const sec = curso.secciones.find(s => s.id === secId);
+    function openAddItemModal(secOrSubId, parentSecId = null, isSubseccion = false) {
+      modalEditSecId = secOrSubId;
+      modalEditParentSecId = parentSecId;
+      modalEditIsSubseccion = isSubseccion;
+      modalEditElId = null;
+      modalEnlaces = [];
+      abrirModal(htmlModalElemento(null));
+      renderizarEnlacesModal();
+    }
+    function editarElemento(secOrSubId, elId) {
+      // Buscar en secciones y subsecciones
+      let sec = curso.secciones.find(s => s.id === secOrSubId);
+      let isSubseccion = false;
+      let parentSecId = null;
+      if (!sec) {
+        for (const s of curso.secciones) {
+          const sub = (s.subsecciones || []).find(sb => sb.id === secOrSubId);
+          if (sub) { sec = sub; isSubseccion = true; parentSecId = s.id; break; }
+        }
+      }
       const el = sec?.elementos.find(e => e.id === elId);
       if (!el) return;
-      modalEditSecId = secId; modalEditElId = elId;
+      modalEditSecId = secOrSubId;
+      modalEditParentSecId = parentSecId;
+      modalEditIsSubseccion = isSubseccion;
+      modalEditElId = elId;
       modalEnlaces = el.enlaces ? JSON.parse(JSON.stringify(el.enlaces)) : [];
       abrirModal(htmlModalElemento(el)); renderizarEnlacesModal();
     }
@@ -2630,27 +2712,89 @@
       const desc = document.getElementById('inp-el-desc')?.value.trim() || '';
       const url = document.getElementById('inp-el-url')?.value.trim() || '';
       const imgUrl = document.getElementById('inp-el-imgurl')?.value.trim() || '';
-      const sec = curso.secciones.find(s => s.id === modalEditSecId);
-      if (!sec) return;
+
+      // Resolver el contenedor (sección o subsección)
+      let contenedor = curso.secciones.find(s => s.id === modalEditSecId);
+      if (!contenedor && modalEditIsSubseccion) {
+        const parentSec = curso.secciones.find(s => s.id === modalEditParentSecId);
+        contenedor = (parentSec?.subsecciones || []).find(sb => sb.id === modalEditSecId);
+      }
+      if (!contenedor) return;
+
       const btn = document.getElementById('btn-save-el');
       if (btn) { btn.disabled = true; btn.textContent = 'Guardando…'; }
       try {
         if (modalEditElId) {
-          const el = sec.elementos.find(e => e.id === modalEditElId);
+          const el = contenedor.elementos.find(e => e.id === modalEditElId);
           if (el) Object.assign(el, { titulo, tipo, descripcion: desc, videoUrl: tipo === 'video' ? url : '', imagenUrl: tipo === 'imagen' ? imgUrl : '', enlaces: modalEnlaces });
         } else {
-          sec.elementos = sec.elementos || [];
-          sec.elementos.push({ id: generarId('e'), titulo, tipo, descripcion: desc, videoUrl: tipo === 'video' ? url : '', imagenUrl: tipo === 'imagen' ? imgUrl : '', enlaces: modalEnlaces });
+          contenedor.elementos = contenedor.elementos || [];
+          contenedor.elementos.push({ id: generarId('e'), titulo, tipo, descripcion: desc, videoUrl: tipo === 'video' ? url : '', imagenUrl: tipo === 'imagen' ? imgUrl : '', enlaces: modalEnlaces });
         }
         await guardarCurso(); cerrarModal(); mostrarToast(modalEditElId ? 'Elemento actualizado' : 'Elemento añadido', 'success');
       } catch (_) { if (btn) { btn.disabled = false; btn.textContent = 'Guardar'; } }
     }
-    async function eliminarElemento(secId, elId) {
+    async function eliminarElemento(secOrSubId, elId) {
       if (!confirm('¿Eliminar este elemento?')) return;
+      let contenedor = curso.secciones.find(s => s.id === secOrSubId);
+      if (!contenedor) {
+        for (const s of curso.secciones) {
+          const sub = (s.subsecciones || []).find(sb => sb.id === secOrSubId);
+          if (sub) { contenedor = sub; break; }
+        }
+      }
+      if (!contenedor) return;
+      contenedor.elementos = contenedor.elementos.filter(e => e.id !== elId);
+      await guardarCurso(); mostrarToast('Elemento eliminado');
+    }
+
+    /* ================================================================
+       SUBSECCIONES — CRUD
+    ================================================================ */
+    function openAddSubseccionModal(secId) {
+      abrirModal(`
+    <h2 class="modal-title">➕ Nueva subsección</h2>
+    <div class="form-group"><label>Título</label><input type="text" id="inp-subsec-titulo" placeholder="Ej: Parte 1" autofocus /></div>
+    <div class="modal-actions">
+      <button class="btn btn-secondary" onclick="cerrarModal()">Cancelar</button>
+      <button class="btn btn-primary" onclick="guardarNuevaSubseccion('${secId}')">Crear</button>
+    </div>`);
+    }
+    async function guardarNuevaSubseccion(secId) {
+      const titulo = document.getElementById('inp-subsec-titulo').value.trim();
+      if (!titulo) { mostrarToast('Título obligatorio', 'danger'); return; }
       const sec = curso.secciones.find(s => s.id === secId);
       if (!sec) return;
-      sec.elementos = sec.elementos.filter(e => e.id !== elId);
-      await guardarCurso(); mostrarToast('Elemento eliminado');
+      sec.subsecciones = sec.subsecciones || [];
+      sec.subsecciones.push({ id: generarId('sub'), titulo, colapsada: false, elementos: [] });
+      await guardarCurso(); cerrarModal(); mostrarToast('Subsección creada', 'success');
+    }
+    function editarSubseccion(secId, subId) {
+      const sec = curso.secciones.find(s => s.id === secId);
+      const sub = (sec?.subsecciones || []).find(sb => sb.id === subId);
+      if (!sub) return;
+      abrirModal(`
+    <h2 class="modal-title">✏️ Editar subsección</h2>
+    <div class="form-group"><label>Título</label><input type="text" id="inp-subsec-titulo-edit" value="${escHtml(sub.titulo)}" autofocus /></div>
+    <div class="modal-actions">
+      <button class="btn btn-secondary" onclick="cerrarModal()">Cancelar</button>
+      <button class="btn btn-primary" onclick="guardarEdicionSubseccion('${secId}','${subId}')">Guardar</button>
+    </div>`);
+    }
+    async function guardarEdicionSubseccion(secId, subId) {
+      const sec = curso.secciones.find(s => s.id === secId);
+      const sub = (sec?.subsecciones || []).find(sb => sb.id === subId);
+      const titulo = document.getElementById('inp-subsec-titulo-edit')?.value.trim();
+      if (!titulo) { mostrarToast('Título obligatorio', 'danger'); return; }
+      sub.titulo = titulo;
+      await guardarCurso(); cerrarModal(); mostrarToast('Subsección actualizada', 'success');
+    }
+    async function eliminarSubseccion(secId, subId) {
+      if (!confirm('¿Eliminar esta subsección y todos sus elementos?')) return;
+      const sec = curso.secciones.find(s => s.id === secId);
+      if (!sec) return;
+      sec.subsecciones = (sec.subsecciones || []).filter(sb => sb.id !== subId);
+      await guardarCurso(); mostrarToast('Subsección eliminada');
     }
 
     /* ================================================================
@@ -3128,6 +3272,11 @@
     window.crearCodigo = crearCodigo;
     window.toggleBloqueo = toggleBloqueo;
     window.eliminarCodigo = eliminarCodigo;
+    window.openAddSubseccionModal = openAddSubseccionModal;
+    window.guardarNuevaSubseccion = guardarNuevaSubseccion;
+    window.editarSubseccion = editarSubseccion;
+    window.guardarEdicionSubseccion = guardarEdicionSubseccion;
+    window.eliminarSubseccion = eliminarSubseccion;
 
     /* ================================================================
        ARRANQUE
